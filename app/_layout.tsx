@@ -3,10 +3,12 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { onAuthStateChanged, User } from "@firebase/auth";
+import { auth } from "@/config/firebase.config";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -38,22 +40,43 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  const [user, setUser] = useState<User | null>(null);
+
+  const onAuthStateChangedHandler = (user: User | null) => {
+    setUser(user);
+  };
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, onAuthStateChangedHandler);
+  }, []);
+
   if (!loaded) {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return <RootLayoutNav user={user} />;
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({ user }: { user: User | null }) {
   const colorScheme = useColorScheme();
+
+  console.log('user', user);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+      {
+        user ? (
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack>
+        ) : (
+          <Stack>
+            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+          </Stack>
+        )
+      }
     </ThemeProvider>
   );
 }
