@@ -1,35 +1,31 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack, useRouter } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import "react-native-reanimated";
 
-import { useColorScheme } from '@/components/useColorScheme';
-import { onAuthStateChanged, User } from "@firebase/auth";
-import { auth } from "@/config/firebase.config";
+import { useColorScheme } from "@/components/useColorScheme";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { ActivityIndicator } from "react-native"; // Import du AuthProvider
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
-} from 'expo-router';
+} from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -40,43 +36,40 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  const [user, setUser] = useState<User | null>(null);
-
-  const onAuthStateChangedHandler = (user: User | null) => {
-    setUser(user);
-  };
-
-  useEffect(() => {
-    return onAuthStateChanged(auth, onAuthStateChangedHandler);
-  }, []);
-
   if (!loaded) {
-    return null;
+    return <ActivityIndicator size="large" />;
   }
 
-  return <RootLayoutNav user={user} />;
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
 }
 
-function RootLayoutNav({ user }: { user: User | null }) {
+function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  console.log('user', user);
+  useEffect(() => {
+    console.log("Chargement en cours:", loading, "User:", user);  // Add this log
+    if (!loading && !user) {
+      console.log("Redirection vers la page de connexion");  // Add this log
+      router.replace('/(auth)/login');
+    }
+  }, [user, loading, router]);
+
+
+  if (loading) {
+    return <ActivityIndicator size="large" />;
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {
-        user ? (
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          </Stack>
-        ) : (
-          <Stack>
-            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/register" options={{ headerShown: false }} />
-          </Stack>
-        )
-      }
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
     </ThemeProvider>
   );
 }

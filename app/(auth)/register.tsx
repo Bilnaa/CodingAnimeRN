@@ -1,4 +1,4 @@
-import { RegisterForm } from "@/components/forms/register-form";
+import { RegisterForm } from "@/components/forms/RegisterForm";
 import { Text, View } from "react-native";
 import { Link } from "expo-router";
 
