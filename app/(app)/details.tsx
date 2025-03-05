@@ -12,11 +12,14 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { addFavorite, removeFavorite } from "@/services/favorite.service";
+import { useAuth } from "@/context/AuthContext";
 
 const { width } = Dimensions.get('window');
 
 export default function AnimeDetailsScreen() {
   const route = useRoute<RouteProp<{ params: { animeId: number } }, 'params'>>();
+  const { user } = useAuth()
   const navigation = useNavigation();
   const animeId = route.params.animeId;
 
@@ -40,9 +43,15 @@ export default function AnimeDetailsScreen() {
     }
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    // Implement your favorite logic here (e.g., AsyncStorage, Redux)
+  const toggleFavorite = async () => {
+    if(!isFavorite){
+      setIsFavorite(true);
+      await addFavorite(user!.uid, anime!.mal_id);
+    }
+    else {
+      setIsFavorite(false);
+      await removeFavorite(user!.uid, anime!.mal_id);
+    }
   };
 
   const renderLoadingState = () => (
@@ -168,7 +177,7 @@ export default function AnimeDetailsScreen() {
         </View>
 
         {/* Bottom Spacer */}
-        <View style={styles.bottomSpacer} />
+        <View style={styles.bottomSpacer}/>
       </ScrollView>
     );
   };
