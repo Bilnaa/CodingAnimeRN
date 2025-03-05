@@ -1,13 +1,20 @@
 import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'expo-router';
 
-import { Text, View } from '@/components/Themed';
+import { Text, View } from '../../components/Themed';
+import { useColorScheme } from '../../components/useColorScheme';
+import Colors from '../../constants/Colors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
-import AnimeSection from '@/components/AnimeSection';
-import AnimeGridSection from '@/components/AnimeGridSection';
+import AnimeSection from '../../components/AnimeSection';
+import AnimeGridSection from '../../components/AnimeGridSection';
 
 export default function TabOneScreen() {
+  const router = useRouter();
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   // Individual loading states for each section
   const [topAnimeLoading, setTopAnimeLoading] = useState(true);
   const [airingAnimeLoading, setAiringAnimeLoading] = useState(true);
@@ -164,20 +171,23 @@ export default function TabOneScreen() {
 
   const handleSeeAllPress = (category: string) => {
     console.log('See all pressed for:', category);
-    // Navigate to category list screen
+    router.push({
+      pathname: "/category",
+      params: { category }
+    });
   };
 
 
   // Render loading placeholder for a section
   const renderLoadingSection = () => (
     <View style={styles.loadingSectionContainer}>
-      <ActivityIndicator size="large" color="#4CAF50" />
-      <Text style={styles.loadingText}>Loading anime data...</Text>
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading anime data...</Text>
     </View>
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       {topAnimeLoading ? (
         renderLoadingSection()
       ) : (
@@ -204,10 +214,10 @@ export default function TabOneScreen() {
         renderLoadingSection()
       ) : (
         <AnimeGridSection 
-          title="Upcoming" 
+          title="Upcoming Anime" 
           animeList={upcomingAnime}
           onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Upcoming')}
+          onSeeAllPress={() => handleSeeAllPress('Upcoming Anime')}
         />
       )}
     </ScrollView>
@@ -232,7 +242,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#888',
   },
   header: {
     paddingHorizontal: 16,

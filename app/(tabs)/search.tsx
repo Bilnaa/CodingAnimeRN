@@ -6,9 +6,14 @@ import AnimeGridCard from '../../components/AnimeGridCard';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
+import Colors from '../../constants/Colors';
+import { useColorScheme } from '../../components/useColorScheme';
 
 export default function SearchScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Anime[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,13 +21,12 @@ export default function SearchScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filters = [
-    { id: 'all', label: 'All' },
+    { id: 'all', label: 'Tout' },
     { id: 'tv', label: 'TV' },
-    { id: 'movie', label: 'Movie' },
-    { id: 'ova', label: 'OVA' },
+    { id: 'movie', label: 'Film' },
+    { id: 'ova', label: 'OAV' },
     { id: 'special', label: 'Special' },
-    { id: 'ona', label: 'ONA' },
-    { id: 'music', label: 'Music' },
+    { id: 'ona', label: 'ONA' }
   ];
     
   const handleSearch = async () => {
@@ -60,15 +64,15 @@ export default function SearchScreen() {
     <View style={styles.emptyContainer}>
       {hasSearched ? (
         <>
-          <MaterialIcons name="search-off" size={64} color="#999" />
-          <Text style={styles.emptyText}>No results found</Text>
-          <Text style={styles.emptySubtext}>Try a different search term or filter</Text>
+          <MaterialIcons name="search-off" size={64} color={colors.textMuted} />
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucun résultat trouvé</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Essayez un autre terme de recherche ou un filtre</Text>
         </>
       ) : (
         <>
-          <Ionicons name="search" size={64} color="#999" />
-          <Text style={styles.emptyText}>Search for anime</Text>
-          <Text style={styles.emptySubtext}>Enter a title, character, or studio</Text>
+          <Ionicons name="search" size={64} color={colors.textMuted} />
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Rechercher un anime</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Entrez le titre d'un anime</Text>
         </>
       )}
     </View>
@@ -79,11 +83,12 @@ export default function SearchScreen() {
       {/* Header section with search bar */}
       <View style={styles.headerSection}>
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+          <View style={[styles.searchBar, { backgroundColor: colors.backgroundSecondary }]}>
+            <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, { color: colors.text }]}
               placeholder="Search anime..."
+              placeholderTextColor={colors.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
               onSubmitEditing={handleSearch}
@@ -91,7 +96,10 @@ export default function SearchScreen() {
               clearButtonMode="while-editing"
             />
           </View>
-          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+          <TouchableOpacity 
+            style={[styles.searchButton, { backgroundColor: colors.primary }]} 
+            onPress={handleSearch}
+          >
             <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
         </View>
@@ -108,14 +116,16 @@ export default function SearchScreen() {
                 key={filter.id}
                 style={[
                   styles.filterButton,
-                  selectedFilter === filter.id && styles.filterButtonActive
+                  { backgroundColor: colors.backgroundSecondary },
+                  selectedFilter === filter.id && { backgroundColor: colors.primary }
                 ]}
                 onPress={() => setSelectedFilter(filter.id)}
               >
                 <Text 
                   style={[
                     styles.filterText,
-                    selectedFilter === filter.id && styles.filterTextActive
+                    { color: colors.textSecondary },
+                    selectedFilter === filter.id && { color: 'white' }
                   ]}
                 >
                   {filter.label}
@@ -130,8 +140,8 @@ export default function SearchScreen() {
       <View style={styles.contentSection}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0000ff" />
-            <Text style={styles.loadingText}>Searching...</Text>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Searching...</Text>
           </View>
         ) : searchResults.length > 0 ? (
           <FlatList
@@ -176,7 +186,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
     borderRadius: 8,
     paddingHorizontal: 12,
     marginRight: 8,
@@ -190,7 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   searchButton: {
-    backgroundColor: '#4a6ee0',
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 16,
@@ -209,19 +217,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
     marginRight: 8,
-  },
-  filterButtonActive: {
-    backgroundColor: '#4a6ee0',
   },
   filterText: {
     fontSize: 14,
-    color: '#666',
-  },
-  filterTextActive: {
-    color: 'white',
-    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,
@@ -231,7 +230,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#666',
   },
   emptyContainer: {
     flex: 1,
@@ -242,11 +240,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginTop: 16,
-    color: '#666',
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#999',
     marginTop: 8,
   },
   resultsContainer: {
