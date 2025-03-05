@@ -1,6 +1,7 @@
 import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text, View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -167,13 +168,11 @@ export default function TabOneScreen() {
 
   const handleAnimePress = async (anime: Anime) => {
     console.log('Anime pressed:', anime.title);
-
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
     });
   };
-  
 
   const handleSeeAllPress = (category: string) => {
     console.log('See all pressed for:', category);
@@ -193,44 +192,79 @@ export default function TabOneScreen() {
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      {topAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeSection 
-          title="Top Anime" 
-          animeList={topAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Top Anime')}
-        />
-      )}
+    <SafeAreaView 
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+      edges={['top']}
+    >
+      <View style={[styles.header, { backgroundColor: colors.background }]}>
+        <Text style={[styles.title, { color: colors.text }]}>Home</Text>
+      </View>
       
-      {airingAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeGridSection 
-          title="Currently Airing" 
-          animeList={airingAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Currently Airing')}
-        />
-      )}
-      
-      {upcomingAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeGridSection 
-          title="Upcoming Anime" 
-          animeList={upcomingAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Upcoming Anime')}
-        />
-      )}
-    </ScrollView>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+        
+        {topAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeSection 
+            animeList={topAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+        
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Currently Airing</Text>
+        </View>
+        
+        {airingAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeGridSection 
+            animeList={airingAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+        
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Upcoming Anime</Text>
+        </View>
+        
+        {upcomingAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeGridSection 
+            animeList={upcomingAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
   },
@@ -248,26 +282,5 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  }
 });

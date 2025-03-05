@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bilna.CodingAnimeRN"
+      "bundleIdentifier": "com.bilna.CodingAnimeRN",
+      "appleTeamId": "2AZU748V9M"
     },
     "android": {
       "adaptiveIcon": {

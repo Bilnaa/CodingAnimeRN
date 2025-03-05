@@ -1,10 +1,9 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { logout } from "@/services/auth.service";
 
 export default function TabTwoScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -12,11 +11,8 @@ export default function TabTwoScreen() {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={logout}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
       <Text style={[styles.title, { color: colors.text }]}>Tab Two</Text>
-      <View style={[styles.separator, { backgroundColor: colors.cardBorder }]} />
+      <View style={[styles.separator, { backgroundColor: colors.backgroundSecondary }]} />
       <EditScreenInfo path="app/(tabs)/two.tsx" />
     </View>
   );

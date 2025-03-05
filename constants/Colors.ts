@@ -1,75 +1,34 @@
-// Define a cohesive color palette
-const primaryColor = '#6200EE'; // Primary purple - consistent across modes
-const secondaryLight = '#03DAC6'; // Teal accent
-const secondaryDark = '#03DAC6';
-const accentLight = '#FF5252'; // Red accent for important actions
-const accentDark = '#FF5252';
+const purpleLight = '#8A2BE2'; // BlueViolet
+const purpleDark = '#9370DB'; // MediumPurple - Lighter purple for dark mode
+const purpleMuted = '#9370DB'; // MediumPurple
+const dangerColor = '#FF3B30'; // Red for danger actions
+
+// Using a consistent purple color for dark theme
+const darkThemePurple = '#9370DB';
 
 export default {
   light: {
-    // Base colors
-    primary: primaryColor,
-    secondary: secondaryLight,
-    accent: accentLight,
-    
-    // Text colors
-    text: '#121212',
+    text: '#333333',
     textSecondary: '#666666',
     textMuted: '#999999',
-    
-    // Background colors
-    background: '#F8F9FA',
-    backgroundSecondary: '#F0F2F5',
-    card: '#FFFFFF',
-    cardBorder: '#E0E0E0',
-    
-    // UI elements
-    tint: primaryColor,
+    background: '#FFFFFF',
+    backgroundSecondary: '#F5F5F5',
+    tint: purpleLight,
+    primary: purpleLight,
     tabIconDefault: '#CCCCCC',
-    tabIconSelected: primaryColor,
-    
-    // Status colors
-    success: '#4CAF50',
-    warning: '#FFC107',
-    error: '#F44336',
-    info: '#2196F3',
-    
-    // Gradients
-    gradientStart: 'transparent',
-    gradientMiddle: 'rgba(0,0,0,0.6)',
-    gradientEnd: 'rgba(0,0,0,0.85)',
+    tabIconSelected: purpleLight,
+    danger: dangerColor,
   },
   dark: {
-    // Base colors
-    primary: primaryColor,
-    secondary: secondaryDark,
-    accent: accentDark,
-    
-    // Text colors
     text: '#FFFFFF',
-    textSecondary: '#CCCCCC',
-    textMuted: '#999999',
-    
-    // Background colors
+    textSecondary: '#AAAAAA',
+    textMuted: '#888888',
     background: '#121212',
-    backgroundSecondary: '#1E1E1E',
-    card: '#1E1E1E',
-    cardBorder: '#333333',
-    
-    // UI elements
-    tint: primaryColor,
+    backgroundSecondary: '#181818',
+    tint: darkThemePurple,
+    primary: darkThemePurple,
     tabIconDefault: '#666666',
-    tabIconSelected: primaryColor,
-    
-    // Status colors
-    success: '#4CAF50',
-    warning: '#FFC107',
-    error: '#F44336',
-    info: '#2196F3',
-    
-    // Gradients
-    gradientStart: 'transparent',
-    gradientMiddle: 'rgba(0,0,0,0.7)',
-    gradientEnd: 'rgba(0,0,0,0.9)',
+    tabIconSelected: darkThemePurple,
+    danger: dangerColor,
   },
 };
