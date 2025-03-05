@@ -16,14 +16,16 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bilna.CodingAnimeRN",
-      "appleTeamId": "2AZU748V9M"
+      "appleTeamId": "2AZU748V9M",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bilna.CodingAnimeRN"
+      "package": "com.bilna.CodingAnimeRN",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -31,7 +33,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true
