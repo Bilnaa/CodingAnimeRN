@@ -12,8 +12,9 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { addFavorite, removeFavorite } from "@/services/favorite.service";
+import { addFavorite, getFavoriteById, removeFavorite } from "@/services/favorite.service";
 import { useAuth } from "@/context/AuthContext";
+import { awaitExpression } from "@babel/types";
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +29,13 @@ export default function AnimeDetailsScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    fetchAnimeDetails();
+    const fetchData = async () => {
+      await fetchAnimeDetails();
+      const favorite = await getFavoriteById(user!.uid, animeId);
+      setIsFavorite(favorite != null);
+    };
+
+    fetchData();
   }, [animeId]);
 
   const fetchAnimeDetails = async () => {
@@ -46,11 +53,11 @@ export default function AnimeDetailsScreen() {
   const toggleFavorite = async () => {
     if(!isFavorite){
       setIsFavorite(true);
-      await addFavorite(user!.uid, anime!.mal_id);
+      await addFavorite(user!.uid, animeId);
     }
     else {
       setIsFavorite(false);
-      await removeFavorite(user!.uid, anime!.mal_id);
+      await removeFavorite(user!.uid, animeId);
     }
   };
 
