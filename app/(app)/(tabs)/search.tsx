@@ -23,10 +23,10 @@ export default function SearchScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filters = [
-    { id: 'all', label: 'Tout' },
+    { id: 'all', label: 'All' },
     { id: 'tv', label: 'TV' },
-    { id: 'movie', label: 'Film' },
-    { id: 'ova', label: 'OAV' },
+    { id: 'movie', label: 'Movie' },
+    { id: 'ova', label: 'OVA' },
     { id: 'special', label: 'Special' },
     { id: 'ona', label: 'ONA' }
   ];
@@ -50,7 +50,7 @@ export default function SearchScreen() {
       
       setSearchResults(response.data);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Erreur de recherche:', error);
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -58,7 +58,7 @@ export default function SearchScreen() {
   };
 
   const handleAnimePress = async (anime: Anime) => {
-    console.log('Anime pressed:', anime.title);
+    console.log('Anime sélectionné:', anime.title);
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
@@ -70,14 +70,14 @@ export default function SearchScreen() {
       {hasSearched ? (
         <>
           <MaterialIcons name="search-off" size={64} color={colors.textMuted} />
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucun résultat trouvé</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Essayez un autre terme de recherche ou un filtre</Text>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No results found</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Try a different search term or filter</Text>
         </>
       ) : (
         <>
           <Ionicons name="search" size={64} color={colors.textMuted} />
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Rechercher un anime</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Entrez le titre d'un anime</Text>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Search for an anime</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Enter the title of an anime</Text>
         </>
       )}
     </View>
@@ -88,7 +88,7 @@ export default function SearchScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       edges={['top']}
     >
-      {/* Header section with search bar */}
+      {/* Section d'en-tête avec barre de recherche */}
       <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
         <Text style={[styles.screenTitle, { color: colors.text }]}>Recherche</Text>
         <View style={styles.searchContainer}>
@@ -96,7 +96,7 @@ export default function SearchScreen() {
             <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
             <TextInput
               style={[styles.searchInput, { color: colors.text }]}
-              placeholder="Rechercher un anime..."
+              placeholder="Search for an anime..."
               placeholderTextColor={colors.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -105,15 +105,15 @@ export default function SearchScreen() {
               clearButtonMode="while-editing"
             />
           </View>
-          <TouchableOpacity 
+         {/*  <TouchableOpacity 
             style={[styles.searchButton, { backgroundColor: colors.primary }]} 
             onPress={handleSearch}
           >
-            <Text style={styles.searchButtonText}>Rechercher</Text>
-          </TouchableOpacity>
+            <Text style={styles.searchButtonText}>Search</Text>
+          </TouchableOpacity> */}
         </View>
 
-        {/* Filter buttons in a fixed-height container */}
+        {/* Boutons de filtre dans un conteneur à hauteur fixe */}
         <View style={[styles.filtersWrapper, { backgroundColor: colors.background }]}>
           <ScrollView 
             horizontal 
@@ -145,12 +145,12 @@ export default function SearchScreen() {
         </View>
       </View>
 
-      {/* Content section */}
+      {/* Section de contenu */}
       <View style={[styles.contentSection, { backgroundColor: colors.background }]}>
         {isLoading ? (
           <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Searching...</Text>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Recherche en cours...</Text>
           </View>
         ) : searchResults.length > 0 ? (
           <FlatList
