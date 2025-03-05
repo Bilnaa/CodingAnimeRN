@@ -17,7 +17,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bilna.CodingAnimeRN",
       "appleTeamId": "2AZU748V9M",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./ios/CodingAnimeRN/GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.bilna.CodingAnimeRN",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
       "bundler": "metro",
