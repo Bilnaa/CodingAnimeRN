@@ -17,7 +17,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bilna.CodingAnimeRN",
       "appleTeamId": "2AZU748V9M",
-      "googleServicesFile": "./ios/CodingAnimeRN/GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.bilna.CodingAnimeRN",
-      "googleServicesFile": "./android/app/google-services.json"
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -34,8 +34,22 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-google-signin/google-signin"
-    ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.331689204776-hte83476cektgqc40gerialnsnbve2tb"
+        }
+      ]    ],
     "experiments": {
       "typedRoutes": true
     }
