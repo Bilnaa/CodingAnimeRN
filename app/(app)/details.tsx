@@ -21,7 +21,6 @@ const { width } = Dimensions.get('window');
 export default function AnimeDetailsScreen() {
   const route = useRoute<RouteProp<{ params: { animeId: number } }, 'params'>>();
   const { user } = useAuth()
-  const navigation = useNavigation();
   const animeId = route.params.animeId;
 
   const [anime, setAnime] = useState<Anime | null>(null);

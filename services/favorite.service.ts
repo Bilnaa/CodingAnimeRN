@@ -33,9 +33,9 @@ export const getAllFavorites = async (userId: string) => {
     const favoritesQuery = query(collection(db, "favorite"), where("userId", "==", userId));
     const querySnapshot = await getDocs(favoritesQuery);
 
-    const favorites = querySnapshot.docs.map((doc) => ({
+    const favorites: { id: string; userId: string; animeId: number }[] = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
+      ...(doc.data() as { userId: string; animeId: number }),
     }));
 
     return favorites;
@@ -44,6 +44,7 @@ export const getAllFavorites = async (userId: string) => {
     return [];
   }
 };
+
 
 export const getFavoriteById = async (userId: string, animeId: number) => {
   try {
