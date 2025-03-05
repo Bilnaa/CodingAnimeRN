@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard, StatusBar } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { JikanClient, Anime, AnimeType } from '@tutkli/jikan-ts';
 import AnimeGridCard from '@/components/AnimeGridCard';
@@ -8,6 +8,8 @@ import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { Stack } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -55,9 +57,12 @@ export default function SearchScreen() {
     }
   };
 
-  const handleAnimePress = (anime: Anime) => {
-    // Navigate to anime details page (to be implemented)
-    console.log('Selected anime:', anime.title);
+  const handleAnimePress = async (anime: Anime) => {
+    console.log('Anime pressed:', anime.title);
+    router.push({
+      pathname: "/details",
+      params: {animeId: anime.mal_id},
+    });
   };
 
   const renderEmptyState = () => (
@@ -79,15 +84,19 @@ export default function SearchScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView 
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top']}
+    >
       {/* Header section with search bar */}
-      <View style={styles.headerSection}>
+      <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>Recherche</Text>
         <View style={styles.searchContainer}>
           <View style={[styles.searchBar, { backgroundColor: colors.backgroundSecondary }]}>
             <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
             <TextInput
               style={[styles.searchInput, { color: colors.text }]}
-              placeholder="Search anime..."
+              placeholder="Rechercher un anime..."
               placeholderTextColor={colors.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -100,12 +109,12 @@ export default function SearchScreen() {
             style={[styles.searchButton, { backgroundColor: colors.primary }]} 
             onPress={handleSearch}
           >
-            <Text style={styles.searchButtonText}>Search</Text>
+            <Text style={styles.searchButtonText}>Rechercher</Text>
           </TouchableOpacity>
         </View>
 
         {/* Filter buttons in a fixed-height container */}
-        <View style={styles.filtersWrapper}>
+        <View style={[styles.filtersWrapper, { backgroundColor: colors.background }]}>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
@@ -137,9 +146,9 @@ export default function SearchScreen() {
       </View>
 
       {/* Content section */}
-      <View style={styles.contentSection}>
+      <View style={[styles.contentSection, { backgroundColor: colors.background }]}>
         {isLoading ? (
-          <View style={styles.loadingContainer}>
+          <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
             <ActivityIndicator size="large" color={colors.primary} />
             <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Searching...</Text>
           </View>
@@ -161,22 +170,28 @@ export default function SearchScreen() {
           renderEmptyState()
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   headerSection: {
-    // Fixed height section for search and filters
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  screenTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
     marginBottom: 16,
+    marginTop: 8,
   },
   contentSection: {
-    // This will take the remaining space
     flex: 1,
+    paddingHorizontal: 16,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -189,26 +204,29 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginRight: 8,
+    height: 48,
   },
   searchIcon: {
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    height: 44,
+    height: 48,
     fontSize: 16,
   },
   searchButton: {
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 16,
+    height: 48,
   },
   searchButtonText: {
     color: 'white',
     fontWeight: '600',
   },
   filtersWrapper: {
-    height: 40, // Fixed height for the filters section
+    height: 44,
+    marginBottom: 16,
   },
   filtersScrollContent: {
     paddingBottom: 8,
@@ -218,9 +236,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     marginRight: 8,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   filterText: {
     fontSize: 14,
+    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,
@@ -247,9 +269,10 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     paddingBottom: 20,
+    paddingHorizontal: 8,
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 16,
   },
 });
