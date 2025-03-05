@@ -7,9 +7,10 @@ import { useColorScheme } from '../../components/useColorScheme';
 import Colors from '../../constants/Colors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
-import AnimeSection from '../../components/AnimeSection';
-import AnimeGridSection from '../../components/AnimeGridSection';
-
+import AnimeSection from '@/components/AnimeSection';
+import AnimeGridSection from '@/components/AnimeGridSection';
+import { router } from 'expo-router';
+        
 export default function TabOneScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
@@ -164,10 +165,15 @@ export default function TabOneScreen() {
     fetchUpcomingAnime();
   }, [fetchWithRetry]);
 
-  const handleAnimePress = (anime: Anime) => {
+  const handleAnimePress = async (anime: Anime) => {
     console.log('Anime pressed:', anime.title);
-    // Navigate to anime details screen
+
+    router.push({
+      pathname: "/details",
+      params: {animeId: anime.mal_id},
+    });
   };
+  
 
   const handleSeeAllPress = (category: string) => {
     console.log('See all pressed for:', category);
