@@ -1,6 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
-import { login, register } from "@/services/auth.service";
+import { login } from "@/services/auth.service";
+import { router } from "expo-router";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export const LoginForm = () => {
 
   const submitLogin = async () => {
     await login(email, password, setError);
+    router.replace("/");
   }
   return (
     <View>

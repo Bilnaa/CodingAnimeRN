@@ -1,17 +1,10 @@
-import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import { useAuth } from "@/context/AuthContext";
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { logout } from "@/services/auth.service";
 
 export default function TabOneScreen() {
-
-  const { user } = useAuth();
-
-  if (!user) {
-    return <ActivityIndicator size="large" />;
-  }
 
   return (
     <View style={styles.container}>

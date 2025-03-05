@@ -7,11 +7,9 @@ const RegisterView = () => {
       <View>
         <Text style={{ fontWeight: "bold" }}>Register</Text>
         <RegisterForm />
-        <Link href={"/(auth)/login"}>Or login</Link>
+        <Link href={"/auth/login"}>Or login</Link>
       </View>
     )
 }
-
-
 
 export default RegisterView;
