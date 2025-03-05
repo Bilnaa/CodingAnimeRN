@@ -2,14 +2,14 @@ import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 
-import { Text, View } from '../../components/Themed';
-import { useColorScheme } from '../../components/useColorScheme';
-import Colors from '../../constants/Colors';
+import { Text, View } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
 import AnimeSection from '@/components/AnimeSection';
-import AnimeGridSection from '@/components/AnimeGridSection';
-import { router } from 'expo-router';
+import AnimeGridSection from "@/components/AnimeGridSection";
+
         
 export default function TabOneScreen() {
   const router = useRouter();

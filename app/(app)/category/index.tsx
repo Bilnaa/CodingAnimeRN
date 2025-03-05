@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Text, View } from '../../components/Themed';
+import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
-import AnimeGridCard from '../../components/AnimeGridCard';
+import AnimeGridCard from '../../../components/AnimeGridCard';
 import { Ionicons } from '@expo/vector-icons';
-import Colors from '../../constants/Colors';
-import { useColorScheme } from '../../components/useColorScheme';
+import Colors from '../../../constants/Colors';
+import { useColorScheme } from '../../../components/useColorScheme';
 
 export default function CategoryScreen() {
   const { category } = useLocalSearchParams<{ category: string }>();

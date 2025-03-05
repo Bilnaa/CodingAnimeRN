@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard } from 'react-native';
-import { Text, View } from '../../components/Themed';
+import { Text, View } from '@/components/Themed';
 import { JikanClient, Anime, AnimeType } from '@tutkli/jikan-ts';
-import AnimeGridCard from '../../components/AnimeGridCard';
+import AnimeGridCard from '@/components/AnimeGridCard';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import Colors from '../../constants/Colors';
-import { useColorScheme } from '../../components/useColorScheme';
+import Colors from '@/constants/Colors';
+import { useColorScheme } from '@/components/useColorScheme';
 
 export default function SearchScreen() {
   const router = useRouter();
