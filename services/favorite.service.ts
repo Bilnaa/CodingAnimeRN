@@ -1,7 +1,7 @@
 import { collection, query, getDocs, where, deleteDoc, doc, addDoc } from "@firebase/firestore";
 import { db } from "@/config/firebase.config";
 
-export const addFavorite = async (userId: string, animeId: number) => {
+export const addFavoriteToFirebase = async (userId: string, animeId: number) => {
   try {
     const favoriteQuery = query(
       collection(db, "favorite"),
@@ -67,7 +67,7 @@ export const getFavoriteById = async (userId: string, animeId: number) => {
   }
 };
 
-export const removeFavorite = async (userId: string, animeId: number) => {
+export const removeFavoriteFromFirebase = async (userId: string, animeId: number) => {
   try {
     const favoriteQuery = query(
       collection(db, "favorite"),

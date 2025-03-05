@@ -8,19 +8,23 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { addFavorite, getFavoriteById, removeFavorite } from "@/services/favorite.service";
+import {
+  addFavoriteToFirebase,
+  removeFavoriteFromFirebase
+} from "@/services/favorite.service";
 import { useAuth } from "@/context/AuthContext";
-import { awaitExpression } from "@babel/types";
+import { useFavoriteStore } from "@/stores/favorite.store";
 
 const { width } = Dimensions.get('window');
 
 export default function AnimeDetailsScreen() {
   const route = useRoute<RouteProp<{ params: { animeId: number } }, 'params'>>();
   const { user } = useAuth()
+  const { favorites, addFavorite, removeFavorite } = useFavoriteStore()
   const animeId = route.params.animeId;
 
   const [anime, setAnime] = useState<Anime | null>(null);
@@ -30,8 +34,7 @@ export default function AnimeDetailsScreen() {
   useEffect(() => {
     const fetchData = async () => {
       await fetchAnimeDetails();
-      const favorite = await getFavoriteById(user!.uid, animeId);
-      setIsFavorite(favorite != null);
+      setIsFavorite(favorites.includes(animeId));
     };
 
     fetchData();
@@ -52,11 +55,13 @@ export default function AnimeDetailsScreen() {
   const toggleFavorite = async () => {
     if(!isFavorite){
       setIsFavorite(true);
-      await addFavorite(user!.uid, animeId);
+      addFavorite(animeId);
+      await addFavoriteToFirebase(user!.uid, animeId);
     }
     else {
       setIsFavorite(false);
-      await removeFavorite(user!.uid, animeId);
+      removeFavorite(animeId);
+      await removeFavoriteFromFirebase(user!.uid, animeId);
     }
   };
 

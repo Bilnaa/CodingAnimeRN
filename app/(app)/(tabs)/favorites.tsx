@@ -1,27 +1,23 @@
-import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import { Text } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { logout } from "@/services/auth.service";
 import { Anime, JikanClient } from "@tutkli/jikan-ts";
-import { getAllFavorites } from "@/services/favorite.service";
-import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
+import { useFavoriteStore } from "@/stores/favorite.store";
 
 export default function FavoritesScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme];
-  const { user } = useAuth();
+  const { favorites } = useFavoriteStore();
   const [animes, setAnimes] = useState<Anime[]>([]);
 
 
   const fetchAnimes = async () => {
     const client = new JikanClient()
-    const favorites = await getAllFavorites(user!.uid)
     const animes = await Promise.all(favorites.map(async (favorite) => {
-      const response = await client.anime.getAnimeById(favorite.animeId)
+      const response = await client.anime.getAnimeById(favorite)
       return response.data
     }))
     setAnimes(animes)
