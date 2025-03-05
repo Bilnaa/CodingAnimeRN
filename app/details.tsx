@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  ScrollView, 
-  StyleSheet, 
-  Dimensions, 
-  TouchableOpacity 
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity
 } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,10 +17,12 @@ const { width } = Dimensions.get('window');
 
 export default function AnimeDetailsScreen() {
   const route = useRoute<RouteProp<{ params: { animeId: number } }, 'params'>>();
+  const navigation = useNavigation();
   const animeId = route.params.animeId;
 
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     fetchAnimeDetails();
@@ -38,9 +40,14 @@ export default function AnimeDetailsScreen() {
     }
   };
 
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    // Implement your favorite logic here (e.g., AsyncStorage, Redux)
+  };
+
   const renderLoadingState = () => (
     <View style={styles.loadingContainer}>
-      <Text>Loading anime details...</Text>
+      <Text style={styles.loadingText}>Loading anime details...</Text>
     </View>
   );
 
@@ -48,12 +55,15 @@ export default function AnimeDetailsScreen() {
     if (!anime) return null;
 
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         {/* Background Image with Gradient Overlay */}
         <View style={styles.headerContainer}>
-          <Image 
-            source={{ uri: anime.images?.jpg?.large_image_url }} 
-            style={styles.backgroundImage} 
+          <Image
+            source={{ uri: anime.images?.jpg?.large_image_url }}
+            style={styles.backgroundImage}
             blurRadius={5}
           />
           <LinearGradient
@@ -61,17 +71,27 @@ export default function AnimeDetailsScreen() {
             style={styles.gradientOverlay}
           />
 
-          {/* Back Button */}
-          <TouchableOpacity style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
+          {/* Anime Poster and Favorite Button Container */}
+          <View style={styles.posterSection}>
+            {/* Anime Poster */}
+            <View style={styles.posterContainer}>
+              <Image
+                source={{ uri: anime.images?.jpg?.large_image_url }}
+                style={styles.posterImage}
+              />
+            </View>
 
-          {/* Anime Poster */}
-          <View style={styles.posterContainer}>
-            <Image 
-              source={{ uri: anime.images?.jpg?.large_image_url }} 
-              style={styles.posterImage} 
-            />
+            {/* Favorite Button */}
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={toggleFavorite}
+            >
+              <Ionicons
+                name={isFavorite ? "heart" : "heart-outline"}
+                size={30}
+                color={isFavorite ? "red" : "white"}
+              />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -81,7 +101,7 @@ export default function AnimeDetailsScreen() {
           <Text style={styles.subtitleText}>
             {anime.title_english || anime.title_japanese}
           </Text>
-          
+
           <View style={styles.statContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Score</Text>
@@ -122,6 +142,33 @@ export default function AnimeDetailsScreen() {
             </Text>
           </View>
         </View>
+
+        {/* Studios Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Studios</Text>
+          <View style={styles.chipContainer}>
+            {anime.studios?.map((studio) => (
+              <View key={studio.mal_id} style={styles.chip}>
+                <Text style={styles.chipText}>{studio.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Genres Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Genres</Text>
+          <View style={styles.chipContainer}>
+            {anime.genres?.map((genre) => (
+              <View key={genre.mal_id} style={styles.chip}>
+                <Text style={styles.chipText}>{genre.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Bottom Spacer */}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     );
   };
@@ -134,11 +181,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
   },
+  scrollViewContent: {
+    paddingBottom: 100,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#121212',
+  },
+  loadingText: {
+    color: 'white',
   },
   headerContainer: {
     height: width * 0.7,
@@ -159,16 +212,15 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  backButton: {
+  posterSection: {
     position: 'absolute',
-    top: 40,
-    left: 16,
-    zIndex: 10,
+    bottom: 0, // Adjusted to remove space at the top
+    width: '100%',
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    alignItems: 'flex-start', // Align items to the top
   },
   posterContainer: {
-    position: 'absolute',
-    bottom: -50,
-    left: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -179,6 +231,17 @@ const styles = StyleSheet.create({
     width: width * 0.4,
     height: width * 0.6,
     borderRadius: 10,
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 0, // Align to the top of the poster
+    right: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleContainer: {
     marginTop: 70,
@@ -239,5 +302,23 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     color: 'white',
+  },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  chip: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  chipText: {
+    color: 'white',
+    fontSize: 12,
+  },
+  bottomSpacer: {
+    height: 100,
   },
 });
