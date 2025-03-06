@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { Text, View } from '../../../components/Themed';
-import Colors from '../../../constants/Colors';
-import { useColorScheme } from '../../../components/useColorScheme';
+import { useThemeColors } from '../../../components/useThemeColors';
 import { logout } from "../../../services/auth.service";
 import { useAuth } from '../../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,8 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 export default function ProfileScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const colors = useThemeColors();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   
@@ -19,7 +17,7 @@ export default function ProfileScreen() {
   const sectionBackground = colors.background;
   
   // Use theme-appropriate border colors
-  const borderColor = colorScheme === 'dark' 
+  const borderColor = colors.text === '#FFFFFF' 
     ? 'rgba(255,255,255,0.1)' 
     : 'rgba(0,0,0,0.1)';
 
@@ -100,11 +98,6 @@ export default function ProfileScreen() {
         <View style={[styles.section, { backgroundColor: sectionBackground, borderColor, marginTop: 20 }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Account</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="heart" size={24} color={colors.primary} />
-            <Text style={[styles.menuItemText, { color: colors.text }]}>My Favorites</Text>
-            <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
-          </TouchableOpacity>
           
           <View style={[styles.divider, { backgroundColor: dividerColor }]} />
           
@@ -116,7 +109,10 @@ export default function ProfileScreen() {
           
           <View style={[styles.divider, { backgroundColor: dividerColor }]} />
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => router.push('/settings')}
+          >
             <Ionicons name="settings" size={24} color={colors.primary} />
             <Text style={[styles.menuItemText, { color: colors.text }]}>Settings</Text>
             <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
