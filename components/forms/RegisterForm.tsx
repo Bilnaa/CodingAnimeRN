@@ -111,7 +111,7 @@ export const RegisterForm = () => {
 
   return (
     <View style={styles.container}>
-      <RNView>
+      <RNView style={styles.formGroup}>
         <RNView style={[
           styles.inputContainer, 
           { 
@@ -144,10 +144,10 @@ export const RegisterForm = () => {
             value={email}
           />
         </RNView>
-        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+        {errors.email ? <RNText style={styles.errorText}>{errors.email}</RNText> : null}
       </RNView>
       
-      <RNView>
+      <RNView style={styles.formGroup}>
         <RNView style={[
           styles.inputContainer, 
           { 
@@ -178,10 +178,10 @@ export const RegisterForm = () => {
             value={password}
           />
         </RNView>
-        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+        {errors.password ? <RNText style={styles.errorText}>{errors.password}</RNText> : null}
       </RNView>
 
-      <RNView>
+      <RNView style={styles.formGroup}>
         <RNView style={[
           styles.inputContainer, 
           { 
@@ -212,11 +212,14 @@ export const RegisterForm = () => {
             value={confirmPassword}
           />
         </RNView>
-        {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
+        {errors.confirmPassword ? <RNText style={styles.errorText}>{errors.confirmPassword}</RNText> : null}
       </RNView>
       
       <TouchableOpacity 
-        style={styles.registerButton} 
+        style={[
+          styles.registerButton,
+          { backgroundColor: colors.primary }
+        ]} 
         onPress={submitRegister}
         disabled={loading}
       >
@@ -227,7 +230,7 @@ export const RegisterForm = () => {
         )}
       </TouchableOpacity>
       
-      {errors.general ? <Text style={styles.generalErrorText}>{errors.general}</Text> : null}
+      {errors.general ? <RNText style={styles.generalErrorText}>{errors.general}</RNText> : null}
       
       <RNView style={styles.dividerContainer}>
         <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
@@ -271,7 +274,9 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     padding: 16,
-    gap: 16,
+  },
+  formGroup: {
+    marginBottom: 16,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -288,7 +293,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   registerButton: {
-    backgroundColor: '#6200ee',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -298,6 +302,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 16,
   },
   registerButtonText: {
     color: '#fff',
@@ -307,7 +312,7 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 8,
+    marginVertical: 16,
   },
   divider: {
     flex: 1,
@@ -340,7 +345,6 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 4,
-    marginLeft: 4,
   },
   generalErrorText: {
     color: 'red',

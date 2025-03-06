@@ -105,7 +105,7 @@ export const LoginForm = () => {
   
   return (
     <View style={styles.container}>
-      <RNView>
+      <RNView style={styles.formGroup}>
         <RNView style={[
           styles.inputContainer, 
           { 
@@ -138,10 +138,10 @@ export const LoginForm = () => {
             value={email}
           />
         </RNView>
-        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+        {errors.email ? <RNText style={styles.errorText}>{errors.email}</RNText> : null}
       </RNView>
       
-      <RNView>
+      <RNView style={styles.formGroup}>
         <RNView style={[
           styles.inputContainer, 
           { 
@@ -172,11 +172,14 @@ export const LoginForm = () => {
             value={password}
           />
         </RNView>
-        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+        {errors.password ? <RNText style={styles.errorText}>{errors.password}</RNText> : null}
       </RNView>
       
       <TouchableOpacity 
-        style={styles.loginButton} 
+        style={[
+          styles.loginButton,
+          { backgroundColor: colors.primary }
+        ]} 
         onPress={submitLogin}
         disabled={loading}
       >
@@ -187,7 +190,7 @@ export const LoginForm = () => {
         )}
       </TouchableOpacity>
       
-      {errors.general ? <Text style={styles.generalErrorText}>{errors.general}</Text> : null}
+      {errors.general ? <RNText style={styles.generalErrorText}>{errors.general}</RNText> : null}
       
       <RNView style={styles.dividerContainer}>
         <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
@@ -232,8 +235,10 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 16,
   },
-  inputContainer: {
+  formGroup: {
     marginBottom: 16,
+  },
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -249,7 +254,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   loginButton: {
-    backgroundColor: '#6200ee',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -259,6 +263,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 16,
   },
   loginButtonText: {
     color: '#fff',
