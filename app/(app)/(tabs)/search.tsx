@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard, StatusBar } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { JikanClient, Anime, AnimeType } from '@tutkli/jikan-ts';
 import AnimeGridCard from '@/components/AnimeGridCard';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { useTheme } from '@/context/ThemeContext';
+import { useThemeColors } from '@/components/useThemeColors';
+import { Stack } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Anime[]>([]);
@@ -21,10 +23,10 @@ export default function SearchScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filters = [
-    { id: 'all', label: 'Tout' },
+    { id: 'all', label: 'All' },
     { id: 'tv', label: 'TV' },
-    { id: 'movie', label: 'Film' },
-    { id: 'ova', label: 'OAV' },
+    { id: 'movie', label: 'Movie' },
+    { id: 'ova', label: 'OVA' },
     { id: 'special', label: 'Special' },
     { id: 'ona', label: 'ONA' }
   ];
@@ -48,16 +50,19 @@ export default function SearchScreen() {
       
       setSearchResults(response.data);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Erreur de recherche:', error);
       setSearchResults([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAnimePress = (anime: Anime) => {
-    // Navigate to anime details page (to be implemented)
-    console.log('Selected anime:', anime.title);
+  const handleAnimePress = async (anime: Anime) => {
+    console.log('Anime sélectionné:', anime.title);
+    router.push({
+      pathname: "/details",
+      params: {animeId: anime.mal_id},
+    });
   };
 
   const renderEmptyState = () => (
@@ -65,29 +70,33 @@ export default function SearchScreen() {
       {hasSearched ? (
         <>
           <MaterialIcons name="search-off" size={64} color={colors.textMuted} />
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucun résultat trouvé</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Essayez un autre terme de recherche ou un filtre</Text>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No results found</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Try a different search term or filter</Text>
         </>
       ) : (
         <>
           <Ionicons name="search" size={64} color={colors.textMuted} />
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Rechercher un anime</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Entrez le titre d'un anime</Text>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Search for an anime</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Enter the title of an anime</Text>
         </>
       )}
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      {/* Header section with search bar */}
-      <View style={styles.headerSection}>
+    <SafeAreaView 
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top']}
+    >
+      {/* Section d'en-tête avec barre de recherche */}
+      <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>Recherche</Text>
         <View style={styles.searchContainer}>
           <View style={[styles.searchBar, { backgroundColor: colors.backgroundSecondary }]}>
             <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
             <TextInput
               style={[styles.searchInput, { color: colors.text }]}
-              placeholder="Search anime..."
+              placeholder="Search for an anime..."
               placeholderTextColor={colors.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -96,52 +105,55 @@ export default function SearchScreen() {
               clearButtonMode="while-editing"
             />
           </View>
-          <TouchableOpacity 
+         {/*  <TouchableOpacity 
             style={[styles.searchButton, { backgroundColor: colors.primary }]} 
             onPress={handleSearch}
           >
             <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
-        {/* Filter buttons in a fixed-height container */}
-        <View style={styles.filtersWrapper}>
+        {/* Boutons de filtre dans un conteneur à hauteur fixe */}
+        <View style={[styles.filtersWrapper, { backgroundColor: colors.background }]}>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={styles.filtersScrollContent}
           >
-            {filters.map(filter => (
-              <TouchableOpacity
-                key={filter.id}
-                style={[
-                  styles.filterButton,
-                  { backgroundColor: colors.backgroundSecondary },
-                  selectedFilter === filter.id && { backgroundColor: colors.primary }
-                ]}
-                onPress={() => setSelectedFilter(filter.id)}
-              >
-                <Text 
+            {filters.map(filter => {
+              console.log('Filter button color:', colors.primary);
+              return (
+                <TouchableOpacity
+                  key={filter.id}
                   style={[
-                    styles.filterText,
-                    { color: colors.textSecondary },
-                    selectedFilter === filter.id && { color: 'white' }
+                    styles.filterButton,
+                    { backgroundColor: colors.backgroundSecondary },
+                    selectedFilter === filter.id && { backgroundColor: colors.primary }
                   ]}
+                  onPress={() => setSelectedFilter(filter.id)}
                 >
-                  {filter.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text 
+                    style={[
+                      styles.filterText,
+                      { color: colors.textSecondary },
+                      selectedFilter === filter.id && { color: 'white' }
+                    ]}
+                  >
+                    {filter.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
       </View>
 
-      {/* Content section */}
-      <View style={styles.contentSection}>
+      {/* Section de contenu */}
+      <View style={[styles.contentSection, { backgroundColor: colors.background }]}>
         {isLoading ? (
-          <View style={styles.loadingContainer}>
+          <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Searching...</Text>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Recherche en cours...</Text>
           </View>
         ) : searchResults.length > 0 ? (
           <FlatList
@@ -161,22 +173,28 @@ export default function SearchScreen() {
           renderEmptyState()
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   headerSection: {
-    // Fixed height section for search and filters
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  screenTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
     marginBottom: 16,
+    marginTop: 8,
   },
   contentSection: {
-    // This will take the remaining space
     flex: 1,
+    paddingHorizontal: 16,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -189,26 +207,29 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginRight: 8,
+    height: 48,
   },
   searchIcon: {
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    height: 44,
+    height: 48,
     fontSize: 16,
   },
   searchButton: {
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 16,
+    height: 48,
   },
   searchButtonText: {
     color: 'white',
     fontWeight: '600',
   },
   filtersWrapper: {
-    height: 40, // Fixed height for the filters section
+    height: 44,
+    marginBottom: 16,
   },
   filtersScrollContent: {
     paddingBottom: 8,
@@ -218,9 +239,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     marginRight: 8,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   filterText: {
     fontSize: 14,
+    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,
@@ -247,9 +272,10 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     paddingBottom: 20,
+    paddingHorizontal: 8,
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 16,
   },
 });

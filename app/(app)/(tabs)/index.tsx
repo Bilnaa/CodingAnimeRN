@@ -1,10 +1,11 @@
 import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text, View } from '@/components/Themed';
-import { useColorScheme } from '@/components/useColorScheme';
-import Colors from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
+import { useThemeColors } from '@/components/useThemeColors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
 import AnimeSection from '@/components/AnimeSection';
@@ -12,11 +13,11 @@ import AnimeGridSection from "@/components/AnimeGridSection";
 import { useAuth } from "@/context/AuthContext";
 import { useFavoriteStore } from "@/stores/favorite.store";
 
-
+        
 export default function TabOneScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
 
   const { user } = useAuth();
   const { loadFavorites } = useFavoriteStore()
@@ -25,12 +26,12 @@ export default function TabOneScreen() {
   const [topAnimeLoading, setTopAnimeLoading] = useState(true);
   const [airingAnimeLoading, setAiringAnimeLoading] = useState(true);
   const [upcomingAnimeLoading, setUpcomingAnimeLoading] = useState(true);
-
+  
   // Data states
   const [topAnime, setTopAnime] = useState<Anime[]>([]);
   const [airingAnime, setAiringAnime] = useState<Anime[]>([]);
   const [upcomingAnime, setUpcomingAnime] = useState<Anime[]>([]);
-
+  
   // Helper function to add delay between API calls
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -47,7 +48,7 @@ export default function TabOneScreen() {
   };
 
   // Helper function to fetch with retry
-  const fetchWithRetry = useCallback(async <T, >(
+  const fetchWithRetry = useCallback(async <T,>(
     fetchFn: () => Promise<T>,
     retries = 3,
     baseDelay = 1000,
@@ -59,18 +60,18 @@ export default function TabOneScreen() {
       if (retries <= 0) {
         throw error;
       }
-
+      
       // If we get a 429 Too Many Requests, wait longer
       const isRateLimited = error.response && error.response.status === 429;
-
+      
       // Calculate delay with exponential backoff
-      const waitTime = isRateLimited
+      const waitTime = isRateLimited 
         ? Math.min(maxDelay, baseDelay * Math.pow(2, 3 - retries))
         : baseDelay;
-
+      
       console.log(`Request failed, retrying in ${waitTime}ms... (${retries} retries left)`);
       await delay(waitTime);
-
+      
       return fetchWithRetry(fetchFn, retries - 1, baseDelay, maxDelay);
     }
   }, []);
@@ -84,7 +85,7 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     const jikanClient = new JikanClient();
-
+    
     // Fetch top anime
     const fetchTopAnime = async () => {
       try {
@@ -101,28 +102,28 @@ export default function TabOneScreen() {
         setTopAnimeLoading(false);
       }
     };
-
+    
     // Fetch currently airing anime
     const fetchAiringAnime = async () => {
       try {
         // Increased delay to 1000ms (1 second)
         await delay(1000);
-
-        const currentSeason: AnimeSeason = new Date().getMonth() >= 9 ? 'fall' :
-          new Date().getMonth() >= 6 ? 'summer' :
-            new Date().getMonth() >= 3 ? 'spring' : 'winter';
+        
+        const currentSeason: AnimeSeason = new Date().getMonth() >= 9 ? 'fall' : 
+                             new Date().getMonth() >= 6 ? 'summer' : 
+                             new Date().getMonth() >= 3 ? 'spring' : 'winter';
         const currentYear = new Date().getFullYear();
-
+        
         const response = await fetchWithRetry(
           () => jikanClient.seasons.getSeason(currentYear, currentSeason),
           3, // retries
           1000, // base delay
           5000 // max delay
         );
-
+        
         const airingData = removeDuplicates(response.data);
         setAiringAnime(airingData);
-
+        
       } catch (err) {
         console.error('Error fetching airing anime:', err);
         setAiringAnimeLoading(false);
@@ -130,41 +131,38 @@ export default function TabOneScreen() {
         setAiringAnimeLoading(false);
       }
     };
-
+    
     // Fetch upcoming anime
     const fetchUpcomingAnime = async () => {
       try {
         // Increased delay to 2000ms (2 seconds)
         await delay(2000);
-
-        const currentSeason: AnimeSeason = new Date().getMonth() >= 9 ? 'fall' :
-          new Date().getMonth() >= 6 ? 'summer' :
-            new Date().getMonth() >= 3 ? 'spring' : 'winter';
+        
+        const currentSeason: AnimeSeason = new Date().getMonth() >= 9 ? 'fall' : 
+                             new Date().getMonth() >= 6 ? 'summer' : 
+                             new Date().getMonth() >= 3 ? 'spring' : 'winter';
         const currentYear = new Date().getFullYear();
-
+        
         let nextSeason: AnimeSeason;
         let nextYear = currentYear;
         if (currentSeason === 'fall') {
           nextSeason = 'winter';
           nextYear = currentYear + 1;
-        }
-        else if (currentSeason === 'winter') {
+        } else if (currentSeason === 'winter') {
           nextSeason = 'spring';
-        }
-        else if (currentSeason === 'spring') {
+        } else if (currentSeason === 'spring') {
           nextSeason = 'summer';
-        }
-        else {
+        } else {
           nextSeason = 'fall';
         }
-
+        
         const response = await fetchWithRetry(
           () => jikanClient.seasons.getSeason(nextYear, nextSeason),
           3, // retries
           1000, // base delay
           5000 // max delay
         );
-
+        
         setUpcomingAnime(removeDuplicates(response.data));
       } catch (err) {
         console.error('Error fetching upcoming anime:', err);
@@ -172,7 +170,7 @@ export default function TabOneScreen() {
         setUpcomingAnimeLoading(false);
       }
     };
-
+    
 
     // Start fetches in sequence to ensure dependencies are available
     fetchTopAnime();
@@ -185,10 +183,10 @@ export default function TabOneScreen() {
 
     router.push({
       pathname: "/details",
-      params: { animeId: anime.mal_id },
+      params: {animeId: anime.mal_id},
     });
   };
-
+  
 
   const handleSeeAllPress = (category: string) => {
     console.log('See all pressed for:', category);
@@ -202,50 +200,85 @@ export default function TabOneScreen() {
   // Render loading placeholder for a section
   const renderLoadingSection = () => (
     <View style={styles.loadingSectionContainer}>
-      <ActivityIndicator size="large" color={colors.primary}/>
+      <ActivityIndicator size="large" color={colors.primary} />
       <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading anime data...</Text>
     </View>
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      {topAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeSection
-          title="Top Anime"
-          animeList={topAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Top Anime')}
-        />
-      )}
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+      edges={['top']}
+    >
+      <View style={[styles.header, { backgroundColor: colors.background }]}>
+        <Text style={[styles.title, { color: colors.text }]}>Home</Text>
+      </View>
 
-      {airingAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeGridSection
-          title="Currently Airing"
-          animeList={airingAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Currently Airing')}
-        />
-      )}
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
 
-      {upcomingAnimeLoading ? (
-        renderLoadingSection()
-      ) : (
-        <AnimeGridSection
-          title="Upcoming Anime"
-          animeList={upcomingAnime}
-          onAnimePress={handleAnimePress}
-          onSeeAllPress={() => handleSeeAllPress('Upcoming Anime')}
-        />
-      )}
-    </ScrollView>
+        {topAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeSection
+            animeList={topAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Currently Airing</Text>
+        </View>
+
+        {airingAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeGridSection
+            animeList={airingAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Upcoming Anime</Text>
+        </View>
+
+        {upcomingAnimeLoading ? (
+          renderLoadingSection()
+        ) : (
+          <AnimeGridSection
+            animeList={upcomingAnime}
+            onAnimePress={handleAnimePress}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
   },
@@ -263,26 +296,5 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  }
 });

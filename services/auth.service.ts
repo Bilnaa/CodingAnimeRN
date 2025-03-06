@@ -1,6 +1,17 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth";
-import { auth } from "@/config/firebase.config";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from "@firebase/auth";
+import { auth } from "../config/firebase.config";
 import { FirebaseError } from "@firebase/app";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Platform } from 'react-native';
+import ENV from '../config/env.config';
+
+// Initialize Google Sign-In with platform-specific configuration
+GoogleSignin.configure({
+    webClientId: ENV.FIREBASE_WEB_CLIENT_ID,
+    iosClientId: Platform.OS === 'ios' ? ENV.FIREBASE_IOS_CLIENT_ID : undefined,
+    offlineAccess: true,
+    forceCodeForRefreshToken: true,
+});
 
 export const register = async (email: string, password: string, setError: (message: string) => void) => {
     try {
@@ -38,6 +49,69 @@ export const login = async (email: string, password: string, setError: (message:
     }
 }
 
+export const googleAuth = async (setError: (message: string) => void) => {
+    try {
+        console.log("Starting Google Sign-In process...");
+        console.log("Platform:", Platform.OS);
+        console.log("Web Client ID:", ENV.FIREBASE_WEB_CLIENT_ID);
+        
+        
+        // Check if your device supports Google Play
+        console.log("Checking Google Play Services...");
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        console.log("Google Play Services available");
+        
+        // Sign in with Google
+        console.log("Initiating Google Sign-In...");
+        const userInfo = await GoogleSignin.signIn();
+        console.log("Google Sign-In successful, user info:", userInfo);
+        
+        // Get the tokens
+        console.log("Getting tokens...");
+        const { idToken } = await GoogleSignin.getTokens();
+        console.log("Token received:", idToken ? "✓" : "✗");
+        
+        // Create a Google credential with the token
+        console.log("Creating Firebase credential...");
+        const googleCredential = GoogleAuthProvider.credential(idToken);
+        
+        // Sign-in with credential
+        console.log("Signing in with Firebase...");
+        const userCredential = await signInWithCredential(auth, googleCredential);
+        console.log("Firebase sign-in successful");
+        
+        return userCredential.user;
+    } catch (e: any) {
+        console.error("Google Sign-In Error:", e);
+        console.error("Error details:", JSON.stringify(e, null, 2));
+        
+        // Handle specific error messages based on the error code or message
+        if (e.code === 'SIGN_IN_CANCELLED' || e.message?.includes('cancelled')) {
+            setError("Sign-in process was cancelled");
+        } else if (e.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+            setError("Google Play Services is not available on this device");
+        } else if (e.code === 'auth/account-exists-with-different-credential') {
+            setError("An account already exists with the same email address but different sign-in credentials");
+        } else if (e.code === 'auth/popup-blocked') {
+            setError("Sign-in popup was blocked by the browser");
+        } else if (e.code === 'auth/popup-closed-by-user') {
+            setError("Sign-in popup was closed before completing the sign-in");
+        } else if (e.message?.includes('400') || e.message?.includes('invalid_request')) {
+            setError("Authentication request was invalid. Check your Google configuration.");
+        } else {
+            setError("An error occurred with Google authentication");
+        }
+    }
+}
+
 export const logout = async () => {
-    await auth.signOut()
+    try {
+        // Sign out from Firebase
+        await auth.signOut();
+        
+        // Sign out from Google
+        await GoogleSignin.signOut();
+    } catch (error) {
+        console.error("Logout Error:", error);
+    }
 }

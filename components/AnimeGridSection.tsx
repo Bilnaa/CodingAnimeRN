@@ -3,13 +3,10 @@ import { StyleSheet, TouchableOpacity, FlatList, Dimensions, View as RNView } fr
 import { Text, View } from './Themed';
 import { Anime } from '@tutkli/jikan-ts';
 import AnimeGridCard from './AnimeGridCard';
-import Colors from '../constants/Colors';
-import { useColorScheme } from './useColorScheme';
+import { useThemeColors } from './useThemeColors';
 
 interface AnimeGridSectionProps {
-  title: string;
   animeList: Anime[];
-  onSeeAllPress?: () => void;
   onAnimePress?: (anime: Anime) => void;
 }
 
@@ -17,13 +14,10 @@ const { width } = Dimensions.get('window');
 const PAGE_SIZE = 6; // 6 items per page
 
 export default function AnimeGridSection({ 
-  title, 
   animeList = [], // Provide default empty array to prevent undefined errors
-  onSeeAllPress, 
   onAnimePress 
 }: AnimeGridSectionProps) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const colors = useThemeColors();
   
   // Safely handle null or undefined animeList
   const safeAnimeList = animeList || [];
@@ -92,15 +86,6 @@ export default function AnimeGridSection({
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>{title}</Text>
-        {onSeeAllPress && (
-          <TouchableOpacity onPress={onSeeAllPress}>
-            <Text style={[styles.seeAllText, { color: colors.primary }]}>See All</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      
       <FlatList
         key="horizontal-pages"
         data={pages}
@@ -120,21 +105,6 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 16,
     height: 550, // Significantly increased height to ensure both rows are visible
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  seeAllText: {
-    fontWeight: '600',
-    fontSize: 16,
   },
   page: {
     width: width,

@@ -26,6 +26,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.bilna.CodingAnimeRN"/>
+        <data android:scheme="exp+codinganimern"/>
       </intent-filter>
     </activity>
   </application>

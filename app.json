@@ -15,14 +15,17 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bilna.CodingAnimeRN"
+      "bundleIdentifier": "com.bilna.CodingAnimeRN",
+      "appleTeamId": "2AZU748V9M",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bilna.CodingAnimeRN"
+      "package": "com.bilna.CodingAnimeRN",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -30,8 +33,23 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
-    ],
+      "expo-router",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.331689204776-hte83476cektgqc40gerialnsnbve2tb"
+        }
+      ]    ],
     "experiments": {
       "typedRoutes": true
     }
