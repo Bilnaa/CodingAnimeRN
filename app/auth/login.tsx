@@ -1,12 +1,22 @@
-import { Text, View, StyleSheet, SafeAreaView, Image } from "react-native";
+import { StyleSheet, SafeAreaView, Image } from "react-native";
 import { Link } from "expo-router";
 import { LoginForm } from "../../components/forms/LoginForm";
 import { StatusBar } from "expo-status-bar";
+import { Text, View } from "../../components/Themed";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeColors } from "../../components/useThemeColors";
 
 const LoginView = () => {
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
+  const isDark = colorScheme === "dark";
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[
+      styles.container,
+      { backgroundColor: colors.background }
+    ]}>
+      <StatusBar style={isDark ? "light" : "dark"} />
       <View style={styles.header}>
         <Image 
           source={require('../../assets/images/icon.png')} 
@@ -14,14 +24,14 @@ const LoginView = () => {
           resizeMode="contain"
         />
         <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign in to continue</Text>
       </View>
       
       <LoginForm />
       
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't have an account? </Text>
-        <Link href="/auth/register" style={styles.link}>Sign up</Link>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
+        <Link href="/auth/register" style={[styles.link, { color: colors.primary }]}>Sign up</Link>
       </View>
     </SafeAreaView>
   );
@@ -30,7 +40,6 @@ const LoginView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     alignItems: 'center',
@@ -46,11 +55,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#333',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
     marginBottom: 24,
   },
   footer: {
@@ -59,10 +66,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   footerText: {
-    color: '#666',
   },
   link: {
-    color: '#6200ee',
     fontWeight: '600',
   },
 });

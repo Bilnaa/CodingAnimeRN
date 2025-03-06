@@ -1,12 +1,22 @@
 import { RegisterForm } from "../../components/forms/RegisterForm";
-import { Text, View, StyleSheet, SafeAreaView, Image } from "react-native";
+import { StyleSheet, SafeAreaView, Image } from "react-native";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Text, View } from "../../components/Themed";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeColors } from "../../components/useThemeColors";
 
 const RegisterView = () => {
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
+  const isDark = colorScheme === "dark";
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[
+      styles.container,
+      { backgroundColor: colors.background }
+    ]}>
+      <StatusBar style={isDark ? "light" : "dark"} />
       <View style={styles.header}>
         <Image 
           source={require('../../assets/images/icon.png')} 
@@ -14,14 +24,14 @@ const RegisterView = () => {
           resizeMode="contain"
         />
         <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign up to get started</Text>
       </View>
       
       <RegisterForm />
       
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account? </Text>
-        <Link href="/auth/login" style={styles.link}>Sign in</Link>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already have an account? </Text>
+        <Link href="/auth/login" style={[styles.link, { color: colors.primary }]}>Sign in</Link>
       </View>
     </SafeAreaView>
   );
@@ -30,7 +40,6 @@ const RegisterView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     alignItems: 'center',
@@ -46,11 +55,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#333',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
     marginBottom: 24,
   },
   footer: {
@@ -59,10 +66,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   footerText: {
-    color: '#666',
   },
   link: {
-    color: '#6200ee',
     fontWeight: '600',
   },
 });
