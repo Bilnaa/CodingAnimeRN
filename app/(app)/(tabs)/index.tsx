@@ -4,8 +4,8 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text, View } from '@/components/Themed';
-import { useColorScheme } from '@/components/useColorScheme';
-import Colors from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
+import { useThemeColors } from '@/components/useThemeColors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
 import AnimeSection from '@/components/AnimeSection';
@@ -14,8 +14,8 @@ import AnimeGridSection from "@/components/AnimeGridSection";
         
 export default function TabOneScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
   
   // Individual loading states for each section
   const [topAnimeLoading, setTopAnimeLoading] = useState(true);

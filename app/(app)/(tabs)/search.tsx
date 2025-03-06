@@ -6,15 +6,15 @@ import AnimeGridCard from '@/components/AnimeGridCard';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { useTheme } from '@/context/ThemeContext';
+import { useThemeColors } from '@/components/useThemeColors';
 import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Anime[]>([]);
@@ -120,27 +120,30 @@ export default function SearchScreen() {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={styles.filtersScrollContent}
           >
-            {filters.map(filter => (
-              <TouchableOpacity
-                key={filter.id}
-                style={[
-                  styles.filterButton,
-                  { backgroundColor: colors.backgroundSecondary },
-                  selectedFilter === filter.id && { backgroundColor: colors.primary }
-                ]}
-                onPress={() => setSelectedFilter(filter.id)}
-              >
-                <Text 
+            {filters.map(filter => {
+              console.log('Filter button color:', colors.primary);
+              return (
+                <TouchableOpacity
+                  key={filter.id}
                   style={[
-                    styles.filterText,
-                    { color: colors.textSecondary },
-                    selectedFilter === filter.id && { color: 'white' }
+                    styles.filterButton,
+                    { backgroundColor: colors.backgroundSecondary },
+                    selectedFilter === filter.id && { backgroundColor: colors.primary }
                   ]}
+                  onPress={() => setSelectedFilter(filter.id)}
                 >
-                  {filter.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text 
+                    style={[
+                      styles.filterText,
+                      { color: colors.textSecondary },
+                      selectedFilter === filter.id && { color: 'white' }
+                    ]}
+                  >
+                    {filter.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
       </View>

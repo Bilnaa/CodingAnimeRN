@@ -3,8 +3,7 @@ import { StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native
 import { Text, View } from './Themed';
 import { Anime } from '@tutkli/jikan-ts';
 import AnimeCard from './AnimeCard';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { useThemeColors } from './useThemeColors';
 
 interface AnimeSectionProps {
   animeList: Anime[];
@@ -15,8 +14,7 @@ export default function AnimeSection({
   animeList, 
   onAnimePress 
 }: AnimeSectionProps) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const colors = useThemeColors();
   
   // Get unique anime items for the section
   const uniqueAnimeItems = animeList.filter((anime, index, self) => 

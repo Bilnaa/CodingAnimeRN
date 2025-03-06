@@ -55,6 +55,7 @@ export const googleAuth = async (setError: (message: string) => void) => {
         console.log("Platform:", Platform.OS);
         console.log("Web Client ID:", ENV.FIREBASE_WEB_CLIENT_ID);
         
+        
         // Check if your device supports Google Play
         console.log("Checking Google Play Services...");
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });

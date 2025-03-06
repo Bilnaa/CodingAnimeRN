@@ -1,14 +1,14 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/components/useColorScheme";
 import { AuthProvider } from "@/context/AuthContext";
-import { ActivityIndicator } from "react-native"; // Import du AuthProvider
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { ActivityIndicator } from "react-native";
 
 export {
   ErrorBoundary,
@@ -20,13 +20,34 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
+// Wrapper component to use the theme context
+function ThemedApp() {
+  const { colorScheme, theme } = useTheme();
+  const router = useRouter();
+  
+  // Force a refresh when the theme changes
+  useEffect(() => {
+    console.log('Theme changed in ThemedApp:', theme);
+    // This will force a re-render of the current screen
+    const timeout = setTimeout(() => {
+      router.setParams({ refresh: Date.now().toString() });
+    }, 100);
+    
+    return () => clearTimeout(timeout);
+  }, [theme]);
+  
+  return (
+    <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Slot/>
+    </NavigationThemeProvider>
+  );
+}
+
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
-
-  const colorScheme = useColorScheme();
 
   useEffect(() => {
     if (error) throw error;
@@ -44,8 +65,8 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Slot/>
+      <ThemeProvider>
+        <ThemedApp />
       </ThemeProvider>
     </AuthProvider>
   );

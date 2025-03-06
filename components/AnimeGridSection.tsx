@@ -3,8 +3,7 @@ import { StyleSheet, TouchableOpacity, FlatList, Dimensions, View as RNView } fr
 import { Text, View } from './Themed';
 import { Anime } from '@tutkli/jikan-ts';
 import AnimeGridCard from './AnimeGridCard';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { useThemeColors } from './useThemeColors';
 
 interface AnimeGridSectionProps {
   animeList: Anime[];
@@ -18,8 +17,7 @@ export default function AnimeGridSection({
   animeList = [], // Provide default empty array to prevent undefined errors
   onAnimePress 
 }: AnimeGridSectionProps) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const colors = useThemeColors();
   
   // Safely handle null or undefined animeList
   const safeAnimeList = animeList || [];
