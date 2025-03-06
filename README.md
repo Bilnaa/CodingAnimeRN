@@ -1,12 +1,21 @@
-# Coding Anime RN
+# Coding Anime RN / Yorisuto
 
 A React Native application for anime enthusiasts with authentication features.
+
+## Made by 
+Group 1
+
+Noufele Medhi  
+Nils Dargent  
+Mathis Zerari  
+Diego Carvalho Dos Santos
 
 ## Features
 
 - User authentication (Email/Password and Google Sign-In)
-- Anime browsing and discovery
+- Anime browsing, discovery and information page
 - User profiles
+- __We get the anime from this API : [tutkli](https://github.com/tutkli/jikan-ts).__
 
 ## Setup
 
