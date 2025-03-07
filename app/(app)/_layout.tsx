@@ -14,7 +14,10 @@ export default function AppLayout() {
   if (loading) {
     return (
       <SafeAreaProvider>
-        <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+        <StatusBar 
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+          backgroundColor={colorScheme === 'dark' ? '#121212' : '#ffffff'}
+        />
         <ActivityIndicator 
           size="large" 
           color={colors.primary} 
@@ -30,7 +33,10 @@ export default function AppLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+      <StatusBar 
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+        backgroundColor={colorScheme === 'dark' ? '#121212' : '#ffffff'}
+      />
       <Stack
         screenOptions={{
           headerStyle: {

@@ -22,7 +22,10 @@ export default function TabLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+      <StatusBar 
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+        backgroundColor={colorScheme === 'dark' ? '#121212' : '#ffffff'}
+      />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: colors.primary,

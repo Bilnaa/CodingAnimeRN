@@ -12,7 +12,8 @@ import {
   ImageBackground,
   Alert,
   ToastAndroid,
-  Modal
+  Modal,
+  ActivityIndicator
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
@@ -164,8 +165,12 @@ export default function AnimeDetailsScreen() {
   };
 
   const renderLoadingState = () => (
-    <View style={styles.loadingContainer}>
-      <Text style={styles.loadingText}>Loading anime details...</Text>
+    <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+      <StatusBar 
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+        backgroundColor={colors.background}
+      />
+      <Text style={[styles.loadingText, { color: colors.text }]}>Loading anime details...</Text>
     </View>
   );
 
@@ -173,18 +178,27 @@ export default function AnimeDetailsScreen() {
     if (!anime) return null;
 
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar 
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+          backgroundColor={colors.background}
+        />
         
         {/* Header */}
         <Stack.Screen 
           options={{
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: colors.background,
             },
-            headerTintColor: '#fff',
-            headerTitle: 'details',
+            headerTintColor: colors.text,
+            headerTitle: anime.title_english || anime.title || 'Anime Details',
             headerShadowVisible: false,
+            headerBackVisible: false,
+            headerLeft: () => (
+              <TouchableOpacity onPress={handleBackPress} style={{ marginLeft: 5 }}>
+                <Ionicons name="chevron-back" size={28} color={colors.text} />
+              </TouchableOpacity>
+            ),
           }} 
         />
         
@@ -200,7 +214,10 @@ export default function AnimeDetailsScreen() {
               blurRadius={3}
             >
               <LinearGradient
-                colors={['rgba(0,0,0,0.3)', 'rgba(18,18,18,1)']}
+                colors={colorScheme === 'dark' 
+                  ? ['rgba(0,0,0,0.3)', `${colors.background}`]
+                  : ['rgba(255,255,255,0.3)', `${colors.background}`]
+                }
                 style={styles.headerGradient}
               >
                 <View style={styles.headerContent}>
@@ -215,27 +232,27 @@ export default function AnimeDetailsScreen() {
                       style={styles.posterImage}
                     />
                     <View style={styles.previewIconContainer}>
-                      <Ionicons name="expand-outline" size={18} color="#fff" />
+                      <Ionicons name="expand-outline" size={18} color={colors.text} />
                     </View>
                   </TouchableOpacity>
                   
                   {/* Title and Subtitle */}
                   <View style={styles.titleContainer}>
-                    <Text style={styles.japaneseTitle} numberOfLines={1}>
+                    <Text style={[styles.japaneseTitle, { color: colors.textSecondary }]} numberOfLines={1}>
                       {anime.title_japanese || ''}
                     </Text>
-                    <Text style={styles.titleText} numberOfLines={2}>
+                    <Text style={[styles.titleText, { color: colors.text }]} numberOfLines={2}>
                       {anime.title_english || anime.title}
                     </Text>
                     
-                    <View style={styles.statusRow}>
-                      <Text style={styles.statusText}>
+                    <View style={[styles.statusRow, { backgroundColor: colors.backgroundSecondary }]}>
+                      <Text style={[styles.statusText, { color: colors.text }]}>
                         {anime.status === "Finished Airing" ? "Finished" : anime.status}
                       </Text>
                     </View>
                     
                     <View style={styles.scoreRow}>
-                      <Text style={styles.scoreText}>
+                      <Text style={[styles.scoreText, { color: colors.text }]}>
                         {anime.score?.toFixed(1) || 'N/A'}
                       </Text>
                       
@@ -258,51 +275,51 @@ export default function AnimeDetailsScreen() {
 
           {/* Information Cards */}
           <View style={styles.infoCardsContainer}>
-            <View style={styles.infoCard}>
+            <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
                 <Ionicons name="calendar-outline" size={20} color={colors.primary} />
               </View>
               <View>
-                <Text style={styles.infoCardLabel}>Year</Text>
-                <Text style={styles.infoCardValue}>{anime.year || 'Unknown'}</Text>
+                <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Year</Text>
+                <Text style={[styles.infoCardValue, { color: colors.text }]}>{anime.year || 'Unknown'}</Text>
               </View>
             </View>
             
-            <View style={styles.infoCard}>
+            <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
                 <Ionicons name="film-outline" size={20} color={colors.primary} />
               </View>
               <View>
-                <Text style={styles.infoCardLabel}>Type</Text>
-                <Text style={styles.infoCardValue}>{anime.type || 'Unknown'}</Text>
+                <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Type</Text>
+                <Text style={[styles.infoCardValue, { color: colors.text }]}>{anime.type || 'Unknown'}</Text>
               </View>
             </View>
             
-            <View style={styles.infoCard}>
+            <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
                 <Ionicons name="time-outline" size={20} color={colors.primary} />
               </View>
               <View>
-                <Text style={styles.infoCardLabel}>Status</Text>
-                <Text style={styles.infoCardValue}>{anime.status || 'Unknown'}</Text>
+                <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Status</Text>
+                <Text style={[styles.infoCardValue, { color: colors.text }]}>{anime.status || 'Unknown'}</Text>
               </View>
             </View>
           </View>
 
           {/* Synopsis */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Synopsis</Text>
-            <Text style={styles.synopsisText}>{anime.synopsis || 'No synopsis available.'}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Synopsis</Text>
+            <Text style={[styles.synopsisText, { color: colors.textSecondary }]}>{anime.synopsis || 'No synopsis available.'}</Text>
           </View>
 
           {/* Studios */}
           {anime.studios && anime.studios.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Studios</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Studios</Text>
               <View style={styles.tagsContainer}>
                 {anime.studios?.map((studio) => (
-                  <View key={studio.mal_id} style={styles.tag}>
-                    <Text style={styles.tagText}>{studio.name}</Text>
+                  <View key={studio.mal_id} style={[styles.tag, { backgroundColor: colors.backgroundSecondary }]}>
+                    <Text style={[styles.tagText, { color: colors.textSecondary }]}>{studio.name}</Text>
                   </View>
                 ))}
               </View>
@@ -312,11 +329,11 @@ export default function AnimeDetailsScreen() {
           {/* Genres */}
           {anime.genres && anime.genres.length > 0 && (
             <View style={[styles.section, styles.lastSection]}>
-              <Text style={styles.sectionTitle}>Genres</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Genres</Text>
               <View style={styles.tagsContainer}>
                 {anime.genres?.map((genre) => (
-                  <View key={genre.mal_id} style={styles.tag}>
-                    <Text style={styles.tagText}>{genre.name}</Text>
+                  <View key={genre.mal_id} style={[styles.tag, { backgroundColor: colors.backgroundSecondary }]}>
+                    <Text style={[styles.tagText, { color: colors.textSecondary }]}>{genre.name}</Text>
                   </View>
                 ))}
               </View>
@@ -331,7 +348,7 @@ export default function AnimeDetailsScreen() {
           animationType="fade"
           onRequestClose={closeImagePreview}
         >
-          <View style={styles.previewContainer}>
+          <View style={[styles.previewContainer, { backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.85)' }]}>
             <View style={styles.previewHeader}>
               <TouchableOpacity 
                 onPress={closeImagePreview}
@@ -356,7 +373,11 @@ export default function AnimeDetailsScreen() {
               onPress={saveImageToGallery}
               disabled={savingImage}
             >
-              <Ionicons name="download-outline" size={22} color="#fff" style={styles.saveButtonIcon} />
+              {savingImage ? (
+                <ActivityIndicator color="#fff" size="small" style={styles.saveButtonIcon} />
+              ) : (
+                <Ionicons name="download-outline" size={20} color="#fff" style={styles.saveButtonIcon} />
+              )}
               <Text style={styles.saveButtonText}>
                 {savingImage ? 'Saving...' : 'Save to Gallery'}
               </Text>
@@ -373,24 +394,22 @@ export default function AnimeDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+  },
+  content: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#121212',
   },
   loadingText: {
-    color: 'white',
     fontSize: 16,
-  },
-  content: {
-    flex: 1,
+    marginTop: 10,
   },
   headerContainer: {
-    height: POSTER_HEIGHT + 40,
     width: '100%',
+    height: height * 0.4,
   },
   headerBackground: {
     width: '100%',
@@ -399,31 +418,35 @@ const styles = StyleSheet.create({
   headerGradient: {
     flex: 1,
     justifyContent: 'flex-end',
-    padding: 20,
+    paddingBottom: 20,
   },
   headerContent: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    paddingHorizontal: 20,
   },
   posterTouchable: {
     position: 'relative',
-    borderRadius: 8,
+    borderRadius: 12,
     overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   posterImage: {
     width: POSTER_WIDTH,
     height: POSTER_HEIGHT,
-    borderRadius: 8,
-    backgroundColor: '#2a2a2a',
+    borderRadius: 12,
   },
   previewIconContainer: {
     position: 'absolute',
     bottom: 8,
     right: 8,
     backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
+    borderRadius: 20,
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -433,68 +456,65 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   japaneseTitle: {
-    color: '#aaaaaa',
     fontSize: 14,
     marginBottom: 4,
   },
   titleText: {
-    color: 'white',
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   statusRow: {
-    marginTop: 5,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginBottom: 12,
   },
   statusText: {
-    color: '#aaaaaa',
     fontSize: 14,
+    fontWeight: '500',
   },
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
   },
   scoreText: {
-    color: 'white',
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: 'bold',
   },
   heartButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
   infoCardsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 25,
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1e1e1e',
+    width: width * 0.28,
+    padding: 12,
     borderRadius: 12,
-    padding: 15,
-    width: '30%',
+    alignItems: 'center',
   },
   infoCardIcon: {
-    marginRight: 10,
+    marginBottom: 8,
   },
   infoCardLabel: {
-    color: '#9e9e9e',
     fontSize: 12,
-    marginBottom: 2,
+    textAlign: 'center',
+    marginBottom: 4,
   },
   infoCardValue: {
-    color: 'white',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   section: {
     paddingHorizontal: 20,
@@ -504,13 +524,11 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   sectionTitle: {
-    color: 'white',
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 15,
   },
   synopsisText: {
-    color: '#9e9e9e',
     fontSize: 15,
     lineHeight: 24,
   },
@@ -520,19 +538,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   tag: {
-    backgroundColor: '#1e1e1e',
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 8,
     marginBottom: 5,
   },
   tagText: {
-    color: '#9e9e9e',
     fontSize: 14,
   },
   previewContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.95)',
     justifyContent: 'space-between',
   },
   previewHeader: {

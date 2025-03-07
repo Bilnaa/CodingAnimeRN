@@ -1,7 +1,6 @@
 import { RegisterForm } from "../../components/forms/RegisterForm";
-import { StyleSheet, SafeAreaView, Image } from "react-native";
+import { StyleSheet, SafeAreaView, Image, StatusBar } from "react-native";
 import { Link } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { Text, View } from "../../components/Themed";
 import { useTheme } from "../../context/ThemeContext";
 import { useThemeColors } from "../../components/useThemeColors";
@@ -16,7 +15,10 @@ const RegisterView = () => {
       styles.container,
       { backgroundColor: colors.background }
     ]}>
-      <StatusBar style={isDark ? "light" : "dark"} />
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={isDark ? "#121212" : "#ffffff"}
+      />
       <View style={styles.header}>
         <Image
           source={require('../../assets/images/icon.png')}

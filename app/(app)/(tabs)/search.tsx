@@ -90,7 +90,7 @@ export default function SearchScreen() {
     >
       {/* Section d'en-tête avec barre de recherche */}
       <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
-        <Text style={[styles.screenTitle, { color: colors.text }]}>Recherche</Text>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>Search</Text>
         <View style={styles.searchContainer}>
           <View style={[styles.searchBar, { backgroundColor: colors.backgroundSecondary }]}>
             <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
