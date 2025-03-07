@@ -1,6 +1,6 @@
 import { RegisterForm } from "../../components/forms/RegisterForm";
-import { StyleSheet, SafeAreaView, Image, StatusBar } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, SafeAreaView, Image, StatusBar, TouchableOpacity } from "react-native";
+import { Link, router } from "expo-router";
 import { Text, View } from "../../components/Themed";
 import { useTheme } from "../../context/ThemeContext";
 import { useThemeColors } from "../../components/useThemeColors";
@@ -73,3 +73,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default RegisterView;
