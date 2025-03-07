@@ -49,7 +49,16 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.331689204776-hte83476cektgqc40gerialnsnbve2tb"
         }
-      ]    ],
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }
