@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../../components/Themed';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -18,13 +18,7 @@ export default function CategoryScreen() {
   const [animeList, setAnimeList] = useState<Anime[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (category) {
-      fetchAnimeByCategory();
-    }
-  }, [category]);
-
-  const fetchAnimeByCategory = async () => {
+  const fetchAnimeByCategory = useCallback(async () => {
     if (!category) {
       setError("No category specified");
       setLoading(false);
@@ -87,7 +81,13 @@ export default function CategoryScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category]);
+
+  useEffect(() => {
+    if (category) {
+      fetchAnimeByCategory();
+    }
+  }, [category,fetchAnimeByCategory]);
 
   const handleAnimePress = (anime: Anime) => {
     // Navigate to anime details screen

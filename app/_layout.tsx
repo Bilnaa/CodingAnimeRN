@@ -32,7 +32,7 @@ function ThemedApp() {
     }, 100);
     
     return () => clearTimeout(timeout);
-  }, [theme]);
+  }, [theme, router]);
   
   return (
     <NavigationThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

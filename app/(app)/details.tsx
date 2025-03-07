@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -25,8 +25,8 @@ import * as MediaLibrary from 'expo-media-library';
 import { addFavoriteToFirebase, removeFavoriteFromFirebase } from "@/services/favorite.service";
 import { useAuth } from "@/context/AuthContext";
 import { useFavoriteStore } from "@/stores/favorite.store";
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { useTheme } from '@/context/ThemeContext';
+import { useThemeColors } from '@/components/useThemeColors';
 
 const { width, height } = Dimensions.get('window');
 const POSTER_WIDTH = width * 0.35;
@@ -37,8 +37,8 @@ export default function AnimeDetailsScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { favorites, addFavorite, removeFavorite } = useFavoriteStore();
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
   const animeId = route.params.animeId;
 
   const [anime, setAnime] = useState<Anime | null>(null);
@@ -47,16 +47,7 @@ export default function AnimeDetailsScreen() {
   const [savingImage, setSavingImage] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchAnimeDetails();
-      setIsFavorite(favorites.includes(animeId));
-    };
-
-    fetchData();
-  }, [animeId]);
-
-  const fetchAnimeDetails = async () => {
+  const fetchAnimeDetails = useCallback(async () => {
     try {
       const client = new JikanClient();
       const response = await client.anime.getAnimeById(animeId);
@@ -66,7 +57,16 @@ export default function AnimeDetailsScreen() {
       console.error('Error fetching anime details:', error);
       setLoading(false);
     }
-  };
+  }, [animeId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchAnimeDetails();
+      setIsFavorite(favorites.includes(animeId));
+    };
+
+    fetchData();
+  }, [animeId,favorites,fetchAnimeDetails])
 
   const toggleFavorite = async () => {
     if (!isFavorite) {

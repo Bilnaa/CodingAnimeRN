@@ -35,7 +35,7 @@ export default function TabOneScreen() {
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   // Helper function to remove duplicates by mal_id
-  const removeDuplicates = (animeList: Anime[]): Anime[] => {
+  const removeDuplicates = useCallback((animeList: Anime[]): Anime[] => {
     const seen = new Set();
     return animeList.filter(anime => {
       if (seen.has(anime.mal_id)) {
@@ -44,7 +44,7 @@ export default function TabOneScreen() {
       seen.add(anime.mal_id);
       return true;
     });
-  };
+  }, []);
 
   // Helper function to fetch with retry
   const fetchWithRetry = useCallback(async <T,>(
@@ -79,7 +79,7 @@ export default function TabOneScreen() {
       if (user) {
         loadFavorites(user.uid)
       }
-    }, [user]
+    }, [user,loadFavorites]
   );
 
   useEffect(() => {
@@ -175,20 +175,12 @@ export default function TabOneScreen() {
     fetchTopAnime();
     fetchAiringAnime();
     fetchUpcomingAnime();
-  }, [fetchWithRetry]);
+  }, [fetchWithRetry, removeDuplicates]);
 
   const handleAnimePress = async (anime: Anime) => {
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
-    });
-  };
-  
-
-  const handleSeeAllPress = (category: string) => {
-    router.push({
-      pathname: "/category",
-      params: { category }
     });
   };
 

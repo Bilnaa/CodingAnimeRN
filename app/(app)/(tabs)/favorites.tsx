@@ -168,7 +168,7 @@ export default function FavoritesScreen() {
             keyExtractor={(item) => item.mal_id.toString()}
             numColumns={3}
             columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={styles.resultsContainer}
+            contentContainerStyle={[styles.resultsContainer, { backgroundColor: colors.background }]}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
