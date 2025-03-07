@@ -22,11 +22,6 @@ export default function AnimeCard({ anime, onPress }: AnimeCardProps) {
         resizeMode="cover"
       />
       
-      {/* Add button */}
-      <TouchableOpacity style={styles.addButton}>
-        <AntDesign name="plus" size={24} color="white" />
-      </TouchableOpacity>
-      
       {/* Gradient overlay */}
       <LinearGradient
         colors={['transparent', 'rgba(0,0,0,0.7)', 'rgba(0,0,0,0.9)']}
