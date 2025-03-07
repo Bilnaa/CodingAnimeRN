@@ -5,7 +5,7 @@ A React Native application for anime enthusiasts with authentication features.
 ## Made by 
 Group 1
 
-Noufele Medhi  
+Nabile Noufele 
 Nils Dargent  
 Mathis Zerari  
 Diego Carvalho Dos Santos
