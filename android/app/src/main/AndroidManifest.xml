@@ -28,6 +28,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.bilna.CodingAnimeRN"/>
         <data android:scheme="exp+codinganimern"/>
+        <data android:scheme="exp+anivault"/>
       </intent-filter>
     </activity>
   </application>
