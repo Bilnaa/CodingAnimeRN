@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text, View } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
 import { useThemeColors } from '@/components/useThemeColors';
 
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
@@ -16,7 +15,6 @@ import { useFavoriteStore } from "@/stores/favorite.store";
         
 export default function TabOneScreen() {
   const router = useRouter();
-  const { colorScheme } = useTheme();
   const colors = useThemeColors();
 
   const { user } = useAuth();

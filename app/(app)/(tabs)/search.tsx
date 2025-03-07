@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard, StatusBar } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList, Keyboard } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { JikanClient, Anime, AnimeType } from '@tutkli/jikan-ts';
 import AnimeGridCard from '@/components/AnimeGridCard';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
 import { useThemeColors } from '@/components/useThemeColors';
-import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { colorScheme } = useTheme();
   const colors = useThemeColors();
   
   const [searchQuery, setSearchQuery] = useState('');
