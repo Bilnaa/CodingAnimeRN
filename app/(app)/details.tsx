@@ -8,16 +8,23 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { Anime, JikanClient } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import {
+  addFavoriteToFirebase,
+  removeFavoriteFromFirebase
+} from "@/services/favorite.service";
+import { useAuth } from "@/context/AuthContext";
+import { useFavoriteStore } from "@/stores/favorite.store";
 
 const { width } = Dimensions.get('window');
 
 export default function AnimeDetailsScreen() {
   const route = useRoute<RouteProp<{ params: { animeId: number } }, 'params'>>();
-  const navigation = useNavigation();
+  const { user } = useAuth()
+  const { favorites, addFavorite, removeFavorite } = useFavoriteStore()
   const animeId = route.params.animeId;
 
   const [anime, setAnime] = useState<Anime | null>(null);
@@ -25,7 +32,12 @@ export default function AnimeDetailsScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    fetchAnimeDetails();
+    const fetchData = async () => {
+      await fetchAnimeDetails();
+      setIsFavorite(favorites.includes(animeId));
+    };
+
+    fetchData();
   }, [animeId]);
 
   const fetchAnimeDetails = async () => {
@@ -40,9 +52,17 @@ export default function AnimeDetailsScreen() {
     }
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    // Implement your favorite logic here (e.g., AsyncStorage, Redux)
+  const toggleFavorite = async () => {
+    if(!isFavorite){
+      setIsFavorite(true);
+      addFavorite(animeId);
+      await addFavoriteToFirebase(user!.uid, animeId);
+    }
+    else {
+      setIsFavorite(false);
+      removeFavorite(animeId);
+      await removeFavoriteFromFirebase(user!.uid, animeId);
+    }
   };
 
   const renderLoadingState = () => (
@@ -168,7 +188,7 @@ export default function AnimeDetailsScreen() {
         </View>
 
         {/* Bottom Spacer */}
-        <View style={styles.bottomSpacer} />
+        <View style={styles.bottomSpacer}/>
       </ScrollView>
     );
   };

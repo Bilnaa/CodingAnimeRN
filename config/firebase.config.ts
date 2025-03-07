@@ -2,6 +2,7 @@ import { initializeApp } from "@firebase/app";
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import ENV from './env.config';
+import { getFirestore } from "@firebase/firestore";
 
 const firebaseConfig = {
   apiKey: ENV.FIREBASE_API_KEY,
@@ -14,7 +15,7 @@ const firebaseConfig = {
 
 // Log configuration in development mode
 if (__DEV__) {
-  console.log('Firebase initialized with config:', 
+  console.log('Firebase initialized with config:',
     Object.keys(firebaseConfig).reduce((acc, key) => {
       const k = key as keyof typeof firebaseConfig;
       return { ...acc, [key]: firebaseConfig[k] ? '✓' : '✗' };
@@ -23,6 +24,7 @@ if (__DEV__) {
 }
 
 export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)

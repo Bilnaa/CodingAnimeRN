@@ -10,13 +10,18 @@ import { useThemeColors } from '@/components/useThemeColors';
 import { JikanClient, Anime, AnimeSeason } from '@tutkli/jikan-ts';
 import AnimeSection from '@/components/AnimeSection';
 import AnimeGridSection from "@/components/AnimeGridSection";
+import { useAuth } from "@/context/AuthContext";
+import { useFavoriteStore } from "@/stores/favorite.store";
 
         
 export default function TabOneScreen() {
   const router = useRouter();
   const { colorScheme } = useTheme();
   const colors = useThemeColors();
-  
+
+  const { user } = useAuth();
+  const { loadFavorites } = useFavoriteStore()
+
   // Individual loading states for each section
   const [topAnimeLoading, setTopAnimeLoading] = useState(true);
   const [airingAnimeLoading, setAiringAnimeLoading] = useState(true);
@@ -70,6 +75,13 @@ export default function TabOneScreen() {
       return fetchWithRetry(fetchFn, retries - 1, baseDelay, maxDelay);
     }
   }, []);
+
+  useEffect(() => {
+      if (user) {
+        loadFavorites(user.uid)
+      }
+    }, [user]
+  );
 
   useEffect(() => {
     const jikanClient = new JikanClient();
@@ -168,11 +180,13 @@ export default function TabOneScreen() {
 
   const handleAnimePress = async (anime: Anime) => {
     console.log('Anime pressed:', anime.title);
+
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
     });
   };
+  
 
   const handleSeeAllPress = (category: string) => {
     console.log('See all pressed for:', category);
@@ -192,46 +206,46 @@ export default function TabOneScreen() {
   );
 
   return (
-    <SafeAreaView 
+    <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
       edges={['top']}
     >
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <Text style={[styles.title, { color: colors.text }]}>Home</Text>
       </View>
-      
+
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-        
+
         {topAnimeLoading ? (
           renderLoadingSection()
         ) : (
-          <AnimeSection 
+          <AnimeSection
             animeList={topAnime}
             onAnimePress={handleAnimePress}
           />
         )}
-        
+
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Currently Airing</Text>
         </View>
-        
+
         {airingAnimeLoading ? (
           renderLoadingSection()
         ) : (
-          <AnimeGridSection 
+          <AnimeGridSection
             animeList={airingAnime}
             onAnimePress={handleAnimePress}
           />
         )}
-        
+
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Upcoming Anime</Text>
         </View>
-        
+
         {upcomingAnimeLoading ? (
           renderLoadingSection()
         ) : (
-          <AnimeGridSection 
+          <AnimeGridSection
             animeList={upcomingAnime}
             onAnimePress={handleAnimePress}
           />

@@ -20,7 +20,6 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-// Wrapper component to use the theme context
 function ThemedApp() {
   const { colorScheme, theme } = useTheme();
   const router = useRouter();

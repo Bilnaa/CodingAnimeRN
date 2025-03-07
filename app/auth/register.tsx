@@ -18,17 +18,17 @@ const RegisterView = () => {
     ]}>
       <StatusBar style={isDark ? "light" : "dark"} />
       <View style={styles.header}>
-        <Image 
-          source={require('../../assets/images/icon.png')} 
+        <Image
+          source={require('../../assets/images/icon.png')}
           style={styles.logo}
           resizeMode="contain"
         />
         <Text style={styles.title}>Create Account</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign up to get started</Text>
       </View>
-      
+
       <RegisterForm />
-      
+
       <View style={styles.footer}>
         <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already have an account? </Text>
         <Link href="/auth/login" style={[styles.link, { color: colors.primary }]}>Sign in</Link>
@@ -71,5 +71,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-export default RegisterView;
