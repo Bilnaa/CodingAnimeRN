@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -24,6 +24,7 @@ export default function TabOneScreen() {
   const [topAnimeLoading, setTopAnimeLoading] = useState(true);
   const [airingAnimeLoading, setAiringAnimeLoading] = useState(true);
   const [upcomingAnimeLoading, setUpcomingAnimeLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   
   // Data states
   const [topAnime, setTopAnime] = useState<Anime[]>([]);
@@ -194,6 +195,84 @@ export default function TabOneScreen() {
     });
   };
 
+  // Function to handle refresh
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    
+    // Reset loading states
+    setTopAnimeLoading(true);
+    setAiringAnimeLoading(true);
+    setUpcomingAnimeLoading(true);
+    
+    // Fetch data again
+    const jikanClient = new JikanClient();
+    
+    const refreshData = async () => {
+      try {
+        // Fetch top anime
+        const topResponse = await fetchWithRetry(
+          () => jikanClient.top.getTopAnime(),
+          3,
+          1000,
+          5000
+        );
+        setTopAnime(removeDuplicates(topResponse.data));
+        setTopAnimeLoading(false);
+        
+        // Wait before next request to respect rate limit
+        await delay(1000);
+        
+        // Fetch currently airing anime
+        const currentSeason: AnimeSeason = new Date().getMonth() >= 9 ? 'fall' : 
+                             new Date().getMonth() >= 6 ? 'summer' : 
+                             new Date().getMonth() >= 3 ? 'spring' : 'winter';
+        const currentYear = new Date().getFullYear();
+        
+        const airingResponse = await fetchWithRetry(
+          () => jikanClient.seasons.getSeason(currentYear, currentSeason),
+          3,
+          1000,
+          5000
+        );
+        
+        setAiringAnime(removeDuplicates(airingResponse.data));
+        setAiringAnimeLoading(false);
+        
+        // Wait before next request to respect rate limit
+        await delay(1000);
+        
+        // Fetch upcoming anime
+        let nextSeason: AnimeSeason;
+        let nextYear = currentYear;
+        if (currentSeason === 'fall') {
+          nextSeason = 'winter';
+          nextYear = currentYear + 1;
+        } else if (currentSeason === 'winter') {
+          nextSeason = 'spring';
+        } else if (currentSeason === 'spring') {
+          nextSeason = 'summer';
+        } else {
+          nextSeason = 'fall';
+        }
+        
+        const upcomingResponse = await fetchWithRetry(
+          () => jikanClient.seasons.getSeason(nextYear, nextSeason),
+          3,
+          1000,
+          5000
+        );
+        
+        setUpcomingAnime(removeDuplicates(upcomingResponse.data));
+        setUpcomingAnimeLoading(false);
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+      } finally {
+        setRefreshing(false);
+      }
+    };
+    
+    refreshData();
+  }, [fetchWithRetry, removeDuplicates]);
 
   // Render loading placeholder for a section
   const renderLoadingSection = () => (
@@ -212,8 +291,17 @@ export default function TabOneScreen() {
         <Text style={[styles.title, { color: colors.text }]}>Home</Text>
       </View>
 
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-
+      <ScrollView 
+        style={[styles.container, { backgroundColor: colors.background }]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         {topAnimeLoading ? (
           renderLoadingSection()
         ) : (
