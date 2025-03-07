@@ -1,37 +1,123 @@
-import { FlatList, SafeAreaView, StyleSheet } from 'react-native';
-
-import { Text } from '@/components/Themed';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import React, { useEffect, useState, useCallback } from "react";
+import { FlatList, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { Text, View } from '@/components/Themed';
 import { Anime, JikanClient } from "@tutkli/jikan-ts";
-import { useEffect, useState } from "react";
 import { useFavoriteStore } from "@/stores/favorite.store";
+import AnimeGridCard from '@/components/AnimeGridCard';
+import { useRouter } from 'expo-router';
+import { useThemeColors } from '@/components/useThemeColors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function FavoritesScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  const colors = useThemeColors();
+  const router = useRouter();
   const { favorites } = useFavoriteStore();
   const [animes, setAnimes] = useState<Anime[]>([]);
+  const [filteredAnimes, setFilteredAnimes] = useState<Anime[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
-
-  const fetchAnimes = async () => {
-    const client = new JikanClient()
-    const animes = await Promise.all(favorites.map(async (favorite) => {
-      const response = await client.anime.getAnimeById(favorite)
-      return response.data
-    }))
-    setAnimes(animes)
-  };
+  const fetchAnimes = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const client = new JikanClient()
+      const animes = await Promise.all(favorites.map(async (favorite) => {
+        const response = await client.anime.getAnimeById(favorite)
+        return response.data
+      }))
+      setAnimes(animes)
+      setFilteredAnimes(animes)
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [favorites]);
 
   useEffect(() => {
     fetchAnimes()
-  }, [favorites])
+  }, [fetchAnimes])
+
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    if (text.trim() === '') {
+      setFilteredAnimes(animes);
+    } else {
+      const filtered = animes.filter(anime => 
+        anime.title.toLowerCase().includes(text.toLowerCase()) ||
+        (anime.title_english && anime.title_english.toLowerCase().includes(text.toLowerCase()))
+      );
+      setFilteredAnimes(filtered);
+    }
+  };
+
+  const handleAnimePress = (anime: Anime) => {
+    router.push({
+      pathname: "/details",
+      params: { animeId: anime.mal_id },
+    });
+  };
+
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      {animes.length === 0 ? (
+        <>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No favorites yet</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Add some anime to your favorites</Text>
+        </>
+      ) : (
+        <>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No results found</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Try a different search term</Text>
+        </>
+      )}
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList data={animes} renderItem={({ item }) => (
-        <Text>{item.title}</Text>
-      )} keyExtractor={(item) => item.mal_id.toString()} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>Favorites</Text>
+        <View style={styles.searchContainer}>
+          <View style={[styles.searchBar, { backgroundColor: colors.backgroundSecondary }]}>
+            <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
+            <TextInput
+              style={[styles.searchInput, { color: colors.text }]}
+              placeholder="Search in favorites..."
+              placeholderTextColor={colors.textMuted}
+              value={searchQuery}
+              onChangeText={handleSearch}
+              clearButtonMode="while-editing"
+            />
+          </View>
+        </View>
+      </View>
+
+      <View style={[styles.contentSection, { backgroundColor: colors.background }]}>
+        {isLoading ? (
+          <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading favorites...</Text>
+          </View>
+        ) : filteredAnimes.length > 0 ? (
+          <FlatList
+            data={filteredAnimes}
+            renderItem={({ item }) => (
+              <AnimeGridCard 
+                anime={item} 
+                onPress={() => handleAnimePress(item)}
+              />
+            )}
+            keyExtractor={(item) => item.mal_id.toString()}
+            numColumns={3}
+            columnWrapperStyle={styles.columnWrapper}
+            contentContainerStyle={styles.resultsContainer}
+          />
+        ) : (
+          renderEmptyState()
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -39,6 +125,68 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  screenTitle: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-  }
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 48,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 48,
+    fontSize: 16,
+  },
+  contentSection: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 16,
+  },
+  columnWrapper: {
+    justifyContent: 'flex-start',
+    paddingHorizontal: 16,
+    gap: 16,
+  },
+  resultsContainer: {
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
 });
