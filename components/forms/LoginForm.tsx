@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View as RNView, Text as RNText, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { login, googleAuth } from "../../services/auth.service";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { resetGoogleSignIn } from "../../utils/auth.utils";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeColors } from "../../components/useThemeColors";
+import { View, Text } from "../../components/Themed";
 
 export const LoginForm = () => {
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
+  const isDark = colorScheme === "dark";
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -59,7 +66,7 @@ export const LoginForm = () => {
         }));
       });
       
-      router.replace("/(tabs)");
+      router.replace("/(app)/(tabs)");
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -87,7 +94,7 @@ export const LoginForm = () => {
       });
       
       if (user) {
-        router.replace("/(tabs)");
+        router.replace("/(app)/(tabs)");
       }
     } catch (error) {
       console.error("Google login error:", error);
@@ -98,13 +105,27 @@ export const LoginForm = () => {
   
   return (
     <View style={styles.container}>
-      <View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+      <RNView style={styles.formGroup}>
+        <RNView style={[
+          styles.inputContainer, 
+          { 
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd',
+            backgroundColor: isDark ? colors.backgroundSecondary : '#fff'
+          }
+        ]}>
+          <Ionicons 
+            name="mail-outline" 
+            size={20} 
+            color={isDark ? colors.textSecondary : '#666'} 
+            style={styles.inputIcon} 
+          />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { color: isDark ? colors.text : '#333' }
+            ]}
             placeholder="Email" 
-            placeholderTextColor="#999"
+            placeholderTextColor={isDark ? colors.textMuted : '#999'}
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
@@ -116,17 +137,31 @@ export const LoginForm = () => {
             }}
             value={email}
           />
-        </View>
-        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-      </View>
+        </RNView>
+        {errors.email ? <RNText style={styles.errorText}>{errors.email}</RNText> : null}
+      </RNView>
       
-      <View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+      <RNView style={styles.formGroup}>
+        <RNView style={[
+          styles.inputContainer, 
+          { 
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd',
+            backgroundColor: isDark ? colors.backgroundSecondary : '#fff'
+          }
+        ]}>
+          <Ionicons 
+            name="lock-closed-outline" 
+            size={20} 
+            color={isDark ? colors.textSecondary : '#666'} 
+            style={styles.inputIcon} 
+          />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { color: isDark ? colors.text : '#333' }
+            ]}
             placeholder="Password" 
-            placeholderTextColor="#999"
+            placeholderTextColor={isDark ? colors.textMuted : '#999'}
             onChangeText={(text) => {
               setPassword(text);
               if (errors.password) {
@@ -136,41 +171,58 @@ export const LoginForm = () => {
             secureTextEntry={true}
             value={password}
           />
-        </View>
-        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
-      </View>
+        </RNView>
+        {errors.password ? <RNText style={styles.errorText}>{errors.password}</RNText> : null}
+      </RNView>
       
       <TouchableOpacity 
-        style={styles.loginButton} 
+        style={[
+          styles.loginButton,
+          { backgroundColor: colors.primary }
+        ]} 
         onPress={submitLogin}
         disabled={loading}
       >
         {loading ? (
           <ActivityIndicator color="#fff" size="small" />
         ) : (
-          <Text style={styles.loginButtonText}>Login</Text>
+          <RNText style={styles.loginButtonText}>Login</RNText>
         )}
       </TouchableOpacity>
       
-      {errors.general ? <Text style={styles.generalErrorText}>{errors.general}</Text> : null}
+      {errors.general ? <RNText style={styles.generalErrorText}>{errors.general}</RNText> : null}
       
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
+      <RNView style={styles.dividerContainer}>
+        <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
         <Text style={styles.dividerText}>OR</Text>
-        <View style={styles.divider} />
-      </View>
+        <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
+      </RNView>
       
       <TouchableOpacity 
-        style={styles.googleButton} 
+        style={[
+          styles.googleButton,
+          { 
+            backgroundColor: isDark ? colors.backgroundSecondary : '#fff',
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd'
+          }
+        ]} 
         onPress={handleGoogleLogin}
         disabled={googleLoading}
       >
         {googleLoading ? (
-          <ActivityIndicator color="#444" size="small" />
+          <ActivityIndicator color={isDark ? colors.text : '#444'} size="small" />
         ) : (
           <>
-            <Ionicons name="logo-google" size={20} color="#444" style={styles.googleIcon} />
-            <Text style={styles.googleButtonText}>Sign in with Google</Text>
+            <Ionicons 
+              name="logo-google" 
+              size={20} 
+              color={isDark ? colors.text : '#444'} 
+              style={styles.googleIcon} 
+            />
+            <RNText style={[
+              styles.googleButtonText,
+              { color: isDark ? colors.text : '#444' }
+            ]}>Sign in with Google</RNText>
           </>
         )}
       </TouchableOpacity>
@@ -183,15 +235,15 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 16,
   },
-  inputContainer: {
+  formGroup: {
     marginBottom: 16,
+  },
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
@@ -202,7 +254,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   loginButton: {
-    backgroundColor: '#6200ee',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -212,6 +263,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 16,
   },
   loginButtonText: {
     color: '#fff',
@@ -226,27 +278,22 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ddd',
   },
   dividerText: {
     marginHorizontal: 16,
-    color: '#666',
     fontSize: 14,
   },
   googleButton: {
     flexDirection: 'row',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   googleButtonText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#444',
   },
   errorText: {
     color: 'red',

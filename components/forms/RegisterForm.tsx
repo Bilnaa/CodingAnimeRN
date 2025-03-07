@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View as RNView, Text as RNText, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { register, googleAuth } from "../../services/auth.service";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { resetGoogleSignIn } from "../../utils/auth.utils";
+import { useTheme } from "../../context/ThemeContext";
+import { useThemeColors } from "../../components/useThemeColors";
+import { View, Text } from "../../components/Themed";
 
 export const RegisterForm = () => {
+  const { colorScheme } = useTheme();
+  const colors = useThemeColors();
+  const isDark = colorScheme === "dark";
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -71,7 +78,7 @@ export const RegisterForm = () => {
       
       // Only navigate if no errors occurred
       if (!errors.email && !errors.password && !errors.general) {
-        router.replace("/(tabs)");
+        router.replace("/(app)/(tabs)");
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -93,7 +100,7 @@ export const RegisterForm = () => {
       });
       
       if (user) {
-        router.replace("/(tabs)");
+        router.replace("/(app)/(tabs)");
       }
     } catch (error) {
       console.error("Google sign-up error:", error);
@@ -104,13 +111,27 @@ export const RegisterForm = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+      <RNView style={styles.formGroup}>
+        <RNView style={[
+          styles.inputContainer, 
+          { 
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd',
+            backgroundColor: isDark ? colors.backgroundSecondary : '#f9f9f9'
+          }
+        ]}>
+          <Ionicons 
+            name="mail-outline" 
+            size={20} 
+            color={isDark ? colors.textSecondary : '#666'} 
+            style={styles.inputIcon} 
+          />
           <TextInput 
-            style={styles.input}
+            style={[
+              styles.input,
+              { color: isDark ? colors.text : '#333' }
+            ]}
             placeholder="Email" 
-            placeholderTextColor="#999"
+            placeholderTextColor={isDark ? colors.textMuted : '#999'}
             keyboardType="email-address" 
             autoCapitalize="none" 
             autoComplete="email"
@@ -122,17 +143,31 @@ export const RegisterForm = () => {
             }}
             value={email}
           />
-        </View>
-        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-      </View>
+        </RNView>
+        {errors.email ? <RNText style={styles.errorText}>{errors.email}</RNText> : null}
+      </RNView>
       
-      <View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+      <RNView style={styles.formGroup}>
+        <RNView style={[
+          styles.inputContainer, 
+          { 
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd',
+            backgroundColor: isDark ? colors.backgroundSecondary : '#f9f9f9'
+          }
+        ]}>
+          <Ionicons 
+            name="lock-closed-outline" 
+            size={20} 
+            color={isDark ? colors.textSecondary : '#666'} 
+            style={styles.inputIcon} 
+          />
           <TextInput 
-            style={styles.input}
+            style={[
+              styles.input,
+              { color: isDark ? colors.text : '#333' }
+            ]}
             placeholder="Password" 
-            placeholderTextColor="#999"
+            placeholderTextColor={isDark ? colors.textMuted : '#999'}
             onChangeText={(text) => {
               setPassword(text);
               if (errors.password) {
@@ -142,17 +177,31 @@ export const RegisterForm = () => {
             secureTextEntry={true}
             value={password}
           />
-        </View>
-        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
-      </View>
+        </RNView>
+        {errors.password ? <RNText style={styles.errorText}>{errors.password}</RNText> : null}
+      </RNView>
 
-      <View>
-        <View style={styles.inputContainer}>
-          <Ionicons name="shield-checkmark-outline" size={20} color="#666" style={styles.inputIcon} />
+      <RNView style={styles.formGroup}>
+        <RNView style={[
+          styles.inputContainer, 
+          { 
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd',
+            backgroundColor: isDark ? colors.backgroundSecondary : '#f9f9f9'
+          }
+        ]}>
+          <Ionicons 
+            name="shield-checkmark-outline" 
+            size={20} 
+            color={isDark ? colors.textSecondary : '#666'} 
+            style={styles.inputIcon} 
+          />
           <TextInput 
-            style={styles.input}
+            style={[
+              styles.input,
+              { color: isDark ? colors.text : '#333' }
+            ]}
             placeholder="Confirm Password" 
-            placeholderTextColor="#999"
+            placeholderTextColor={isDark ? colors.textMuted : '#999'}
             onChangeText={(text) => {
               setConfirmPassword(text);
               if (errors.confirmPassword) {
@@ -162,41 +211,58 @@ export const RegisterForm = () => {
             secureTextEntry={true}
             value={confirmPassword}
           />
-        </View>
-        {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
-      </View>
+        </RNView>
+        {errors.confirmPassword ? <RNText style={styles.errorText}>{errors.confirmPassword}</RNText> : null}
+      </RNView>
       
       <TouchableOpacity 
-        style={styles.registerButton} 
+        style={[
+          styles.registerButton,
+          { backgroundColor: colors.primary }
+        ]} 
         onPress={submitRegister}
         disabled={loading}
       >
         {loading ? (
           <ActivityIndicator color="#fff" size="small" />
         ) : (
-          <Text style={styles.registerButtonText}>Register</Text>
+          <RNText style={styles.registerButtonText}>Register</RNText>
         )}
       </TouchableOpacity>
       
-      {errors.general ? <Text style={styles.generalErrorText}>{errors.general}</Text> : null}
+      {errors.general ? <RNText style={styles.generalErrorText}>{errors.general}</RNText> : null}
       
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
+      <RNView style={styles.dividerContainer}>
+        <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
         <Text style={styles.dividerText}>OR</Text>
-        <View style={styles.divider} />
-      </View>
+        <RNView style={[styles.divider, { backgroundColor: isDark ? colors.backgroundSecondary : '#ddd' }]} />
+      </RNView>
       
       <TouchableOpacity 
-        style={styles.googleButton} 
+        style={[
+          styles.googleButton, 
+          { 
+            backgroundColor: isDark ? colors.backgroundSecondary : '#fff',
+            borderColor: isDark ? colors.backgroundSecondary : '#ddd'
+          }
+        ]} 
         onPress={handleGoogleSignUp}
         disabled={googleLoading}
       >
         {googleLoading ? (
-          <ActivityIndicator color="#444" size="small" />
+          <ActivityIndicator color={isDark ? colors.text : '#444'} size="small" />
         ) : (
           <>
-            <Ionicons name="logo-google" size={20} color="#444" style={styles.googleIcon} />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
+            <Ionicons 
+              name="logo-google" 
+              size={20} 
+              color={isDark ? colors.text : '#444'} 
+              style={styles.googleIcon} 
+            />
+            <RNText style={[
+              styles.googleButtonText,
+              { color: isDark ? colors.text : '#444' }
+            ]}>Sign up with Google</RNText>
           </>
         )}
       </TouchableOpacity>
@@ -208,15 +274,15 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     padding: 16,
-    gap: 16,
+  },
+  formGroup: {
+    marginBottom: 16,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
-    backgroundColor: '#f9f9f9',
   },
   inputIcon: {
     padding: 10,
@@ -225,10 +291,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     paddingHorizontal: 8,
-    color: '#333',
   },
   registerButton: {
-    backgroundColor: '#6200ee',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -238,6 +302,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 16,
   },
   registerButtonText: {
     color: '#fff',
@@ -247,24 +312,20 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 8,
+    marginVertical: 16,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ddd',
   },
   dividerText: {
     paddingHorizontal: 16,
-    color: '#666',
   },
   googleButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ddd',
     height: 50,
     borderRadius: 8,
     elevation: 1,
@@ -277,7 +338,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   googleButtonText: {
-    color: '#444',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -285,7 +345,6 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 4,
-    marginLeft: 4,
   },
   generalErrorText: {
     color: 'red',
