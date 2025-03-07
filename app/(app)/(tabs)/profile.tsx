@@ -101,11 +101,11 @@ export default function ProfileScreen() {
           
           <View style={[styles.divider, { backgroundColor: dividerColor }]} />
           
-          <TouchableOpacity style={styles.menuItem}>
+          {/* <TouchableOpacity style={styles.menuItem}>
             <Ionicons name="time" size={24} color={colors.primary} />
             <Text style={[styles.menuItemText, { color: colors.text }]}>Watch History</Text>
             <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           
           <View style={[styles.divider, { backgroundColor: dividerColor }]} />
           
