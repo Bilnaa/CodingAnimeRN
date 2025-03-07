@@ -23,6 +23,7 @@
     "@tutkli/jikan-ts": "^2.2.0",
     "axios": "^1.8.1",
     "axios-cache-interceptor": "^1.6.2",
+    "eas-cli": "^15.0.14",
     "expo": "~52.0.37",
     "expo-build-properties": "~0.13.2",
     "expo-dev-client": "~5.0.12",

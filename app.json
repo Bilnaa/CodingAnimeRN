@@ -20,7 +20,7 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "icon": {
         "dark": "./assets/images/icon-dark.png",
-        "light": "./assets/images/icon.png",
+        "light": "./assets/images/icon.png"
       }
     },
     "android": {
@@ -29,7 +29,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.bilna.CodingAnimeRN",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -77,6 +82,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e2d6fa04-fb14-44b5-848d-ec2c75a6fbc9"
+      }
     }
   }
 }
