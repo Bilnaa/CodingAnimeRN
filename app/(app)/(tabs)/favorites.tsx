@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { FlatList, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { FlatList, StyleSheet, ActivityIndicator, TextInput, RefreshControl } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { Anime, JikanClient } from "@tutkli/jikan-ts";
 import { useFavoriteStore } from "@/stores/favorite.store";
@@ -17,23 +17,74 @@ export default function FavoritesScreen() {
   const [filteredAnimes, setFilteredAnimes] = useState<Anime[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Helper function to add delay between API calls
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  // Helper function to fetch with retry
+  const fetchWithRetry = useCallback(async <T,>(
+    fetchFn: () => Promise<T>,
+    retries = 3,
+    baseDelay = 1000,
+    maxDelay = 10000
+  ): Promise<T> => {
+    try {
+      return await fetchFn();
+    } catch (error: any) {
+      if (retries <= 0) {
+        throw error;
+      }
+      
+      // If we get a 429 Too Many Requests, wait longer
+      const isRateLimited = error.response && error.response.status === 429;
+      
+      // Calculate delay with exponential backoff
+      const waitTime = isRateLimited 
+        ? Math.min(maxDelay, baseDelay * Math.pow(2, 3 - retries))
+        : baseDelay;
+      
+      console.log(`Request failed, retrying in ${waitTime}ms... (${retries} retries left)`);
+      await delay(waitTime);
+      
+      return fetchWithRetry(fetchFn, retries - 1, baseDelay, maxDelay);
+    }
+  }, []);
 
   const fetchAnimes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const client = new JikanClient()
-      const animes = await Promise.all(favorites.map(async (favorite) => {
-        const response = await client.anime.getAnimeById(favorite)
-        return response.data
-      }))
-      setAnimes(animes)
-      setFilteredAnimes(animes)
+      const client = new JikanClient();
+      const results: Anime[] = [];
+      
+      // Process favorites in batches of 3 to respect API rate limit
+      for (let i = 0; i < favorites.length; i++) {
+        const favorite = favorites[i];
+        
+        // Use fetchWithRetry to handle rate limiting and retries
+        const response = await fetchWithRetry(
+          () => client.anime.getAnimeById(favorite),
+          3, // retries
+          1000, // base delay
+          5000 // max delay
+        );
+        
+        results.push(response.data);
+        
+        // Add a delay after each request (except the last one)
+        if (i < favorites.length - 1) {
+          await delay(350); // Wait 350ms between requests to stay under 3 req/sec
+        }
+      }
+      
+      setAnimes(results);
+      setFilteredAnimes(results);
     } catch (error) {
       console.error('Error fetching favorites:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [favorites]);
+  }, [favorites, fetchWithRetry]);
 
   useEffect(() => {
     fetchAnimes()
@@ -75,6 +126,11 @@ export default function FavoritesScreen() {
     </View>
   );
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchAnimes().finally(() => setRefreshing(false));
+  }, [fetchAnimes]);
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.headerSection, { backgroundColor: colors.background }]}>
@@ -113,6 +169,14 @@ export default function FavoritesScreen() {
             numColumns={3}
             columnWrapperStyle={styles.columnWrapper}
             contentContainerStyle={styles.resultsContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+              />
+            }
           />
         ) : (
           renderEmptyState()
