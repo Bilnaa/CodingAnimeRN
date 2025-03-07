@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, Image, TouchableOpacity, Dimensions, View as RNView } from 'react-native';
-import { Text, View } from './Themed';
+import { Text } from './Themed';
 import { Anime } from '@tutkli/jikan-ts';
 import { LinearGradient } from 'expo-linear-gradient';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
 
 interface AnimeCardProps {
   anime: Anime;

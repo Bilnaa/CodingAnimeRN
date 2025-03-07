@@ -22,10 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import {
-  addFavoriteToFirebase,
-  removeFavoriteFromFirebase
-} from "@/services/favorite.service";
+import { addFavoriteToFirebase, removeFavoriteFromFirebase } from "@/services/favorite.service";
 import { useAuth } from "@/context/AuthContext";
 import { useFavoriteStore } from "@/stores/favorite.store";
 import Colors from '@/constants/Colors';
@@ -72,7 +69,7 @@ export default function AnimeDetailsScreen() {
   };
 
   const toggleFavorite = async () => {
-    if(!isFavorite){
+    if (!isFavorite) {
       setIsFavorite(true);
       addFavorite(animeId);
       await addFavoriteToFirebase(user!.uid, animeId);
@@ -87,24 +84,24 @@ export default function AnimeDetailsScreen() {
   const handleBackPress = () => {
     router.back();
   };
-  
+
   const openImagePreview = () => {
     setPreviewVisible(true);
   };
-  
+
   const closeImagePreview = () => {
     setPreviewVisible(false);
   };
-  
+
   const saveImageToGallery = async () => {
     if (!anime || savingImage) return;
-    
+
     try {
       setSavingImage(true);
-      
+
       // Request permissions
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      
+
       if (status !== 'granted') {
         Alert.alert(
           'Permission Required',
@@ -114,40 +111,41 @@ export default function AnimeDetailsScreen() {
         setSavingImage(false);
         return;
       }
-      
+
       // Get image URL
       const imageUrl = anime.images?.jpg?.large_image_url;
-      
+
       if (!imageUrl) {
         showSaveError('Image not available');
         setSavingImage(false);
         return;
       }
-      
+
       // Download the image
       const fileUri = FileSystem.documentDirectory + `${anime.title.replace(/\s+/g, '_')}_poster.jpg`;
       const downloadResult = await FileSystem.downloadAsync(imageUrl, fileUri);
-      
+
       if (downloadResult.status !== 200) {
         showSaveError('Failed to download image');
         setSavingImage(false);
         return;
       }
-      
+
       // Save to media library
       const asset = await MediaLibrary.createAssetAsync(downloadResult.uri);
       await MediaLibrary.createAlbumAsync('Anime Posters', asset, false);
-      
+
       // Show success message
       if (Platform.OS === 'android') {
         ToastAndroid.show('Image saved to gallery', ToastAndroid.SHORT);
-      } else {
+      }
+      else {
         Alert.alert('Success', 'Image saved to gallery');
       }
-      
+
       // Close preview after saving
       closeImagePreview();
-      
+
     } catch (error) {
       console.error('Error saving image:', error);
       showSaveError('Failed to save image');
@@ -155,19 +153,20 @@ export default function AnimeDetailsScreen() {
       setSavingImage(false);
     }
   };
-  
+
   const showSaveError = (message: string) => {
     if (Platform.OS === 'android') {
       ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
+    }
+    else {
       Alert.alert('Error', message);
     }
   };
 
   const renderLoadingState = () => (
     <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-      <StatusBar 
-        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+      <StatusBar
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={colors.background}
       />
       <Text style={[styles.loadingText, { color: colors.text }]}>Loading anime details...</Text>
@@ -179,13 +178,13 @@ export default function AnimeDetailsScreen() {
 
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar 
-          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+        <StatusBar
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
           backgroundColor={colors.background}
         />
-        
+
         {/* Header */}
-        <Stack.Screen 
+        <Stack.Screen
           options={{
             headerStyle: {
               backgroundColor: colors.background,
@@ -196,12 +195,12 @@ export default function AnimeDetailsScreen() {
             headerBackVisible: false,
             headerLeft: () => (
               <TouchableOpacity onPress={handleBackPress} style={{ marginLeft: 5 }}>
-                <Ionicons name="chevron-back" size={28} color={colors.text} />
+                <Ionicons name="chevron-back" size={28} color={colors.text}/>
               </TouchableOpacity>
             ),
-          }} 
+          }}
         />
-        
+
         <ScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
@@ -214,7 +213,7 @@ export default function AnimeDetailsScreen() {
               blurRadius={3}
             >
               <LinearGradient
-                colors={colorScheme === 'dark' 
+                colors={colorScheme === 'dark'
                   ? ['rgba(0,0,0,0.3)', `${colors.background}`]
                   : ['rgba(255,255,255,0.3)', `${colors.background}`]
                 }
@@ -222,7 +221,7 @@ export default function AnimeDetailsScreen() {
               >
                 <View style={styles.headerContent}>
                   {/* Poster */}
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={openImagePreview}
                     style={styles.posterTouchable}
                     activeOpacity={0.8}
@@ -232,10 +231,10 @@ export default function AnimeDetailsScreen() {
                       style={styles.posterImage}
                     />
                     <View style={styles.previewIconContainer}>
-                      <Ionicons name="expand-outline" size={18} color={colors.text} />
+                      <Ionicons name="expand-outline" size={18} color={colors.text}/>
                     </View>
                   </TouchableOpacity>
-                  
+
                   {/* Title and Subtitle */}
                   <View style={styles.titleContainer}>
                     <Text style={[styles.japaneseTitle, { color: colors.textSecondary }]} numberOfLines={1}>
@@ -244,18 +243,18 @@ export default function AnimeDetailsScreen() {
                     <Text style={[styles.titleText, { color: colors.text }]} numberOfLines={2}>
                       {anime.title_english || anime.title}
                     </Text>
-                    
+
                     <View style={[styles.statusRow, { backgroundColor: colors.backgroundSecondary }]}>
                       <Text style={[styles.statusText, { color: colors.text }]}>
                         {anime.status === "Finished Airing" ? "Finished" : anime.status}
                       </Text>
                     </View>
-                    
+
                     <View style={styles.scoreRow}>
                       <Text style={[styles.scoreText, { color: colors.text }]}>
                         {anime.score?.toFixed(1) || 'N/A'}
                       </Text>
-                      
+
                       <TouchableOpacity
                         style={[styles.heartButton, { backgroundColor: colors.primary }]}
                         onPress={toggleFavorite}
@@ -277,27 +276,27 @@ export default function AnimeDetailsScreen() {
           <View style={styles.infoCardsContainer}>
             <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
-                <Ionicons name="calendar-outline" size={20} color={colors.primary} />
+                <Ionicons name="calendar-outline" size={20} color={colors.primary}/>
               </View>
               <View>
                 <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Year</Text>
                 <Text style={[styles.infoCardValue, { color: colors.text }]}>{anime.year || 'Unknown'}</Text>
               </View>
             </View>
-            
+
             <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
-                <Ionicons name="film-outline" size={20} color={colors.primary} />
+                <Ionicons name="film-outline" size={20} color={colors.primary}/>
               </View>
               <View>
                 <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Type</Text>
                 <Text style={[styles.infoCardValue, { color: colors.text }]}>{anime.type || 'Unknown'}</Text>
               </View>
             </View>
-            
+
             <View style={[styles.infoCard, { backgroundColor: colors.backgroundSecondary }]}>
               <View style={styles.infoCardIcon}>
-                <Ionicons name="time-outline" size={20} color={colors.primary} />
+                <Ionicons name="time-outline" size={20} color={colors.primary}/>
               </View>
               <View>
                 <Text style={[styles.infoCardLabel, { color: colors.textSecondary }]}>Status</Text>
@@ -309,7 +308,8 @@ export default function AnimeDetailsScreen() {
           {/* Synopsis */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>Synopsis</Text>
-            <Text style={[styles.synopsisText, { color: colors.textSecondary }]}>{anime.synopsis || 'No synopsis available.'}</Text>
+            <Text
+              style={[styles.synopsisText, { color: colors.textSecondary }]}>{anime.synopsis || 'No synopsis available.'}</Text>
           </View>
 
           {/* Studios */}
@@ -340,7 +340,7 @@ export default function AnimeDetailsScreen() {
             </View>
           )}
         </ScrollView>
-        
+
         {/* Image Preview Modal */}
         <Modal
           visible={previewVisible}
@@ -348,35 +348,36 @@ export default function AnimeDetailsScreen() {
           animationType="fade"
           onRequestClose={closeImagePreview}
         >
-          <View style={[styles.previewContainer, { backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.85)' }]}>
+          <View
+            style={[styles.previewContainer, { backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.85)' }]}>
             <View style={styles.previewHeader}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={closeImagePreview}
                 style={styles.previewCloseButton}
               >
-                <Ionicons name="close" size={28} color="#fff" />
+                <Ionicons name="close" size={28} color="#fff"/>
               </TouchableOpacity>
               <Text style={styles.previewTitle} numberOfLines={1}>
                 {anime.title}
               </Text>
-              <View style={{ width: 28 }} />
+              <View style={{ width: 28 }}/>
             </View>
-            
+
             <Image
               source={{ uri: anime.images?.jpg?.large_image_url }}
               style={styles.previewImage}
               resizeMode="contain"
             />
-            
+
             <TouchableOpacity
               style={[styles.saveButton, { backgroundColor: colors.primary }]}
               onPress={saveImageToGallery}
               disabled={savingImage}
             >
               {savingImage ? (
-                <ActivityIndicator color="#fff" size="small" style={styles.saveButtonIcon} />
+                <ActivityIndicator color="#fff" size="small" style={styles.saveButtonIcon}/>
               ) : (
-                <Ionicons name="download-outline" size={20} color="#fff" style={styles.saveButtonIcon} />
+                <Ionicons name="download-outline" size={20} color="#fff" style={styles.saveButtonIcon}/>
               )}
               <Text style={styles.saveButtonText}>
                 {savingImage ? 'Saving...' : 'Save to Gallery'}

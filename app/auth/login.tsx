@@ -1,5 +1,5 @@
-import { StyleSheet, SafeAreaView, Image, StatusBar, TouchableOpacity } from "react-native";
-import { Link, router } from "expo-router";
+import { StyleSheet, SafeAreaView, Image, StatusBar } from "react-native";
+import { Link } from "expo-router";
 import { LoginForm } from "../../components/forms/LoginForm";
 import { Text, View } from "../../components/Themed";
 import { useTheme } from "../../context/ThemeContext";

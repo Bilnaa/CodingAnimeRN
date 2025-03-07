@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, FlatList, Dimensions, View as RNView } from 'react-native';
-import { Text, View } from './Themed';
+import { StyleSheet, FlatList, Dimensions, View as RNView } from 'react-native';
+import { View } from './Themed';
 import { Anime } from '@tutkli/jikan-ts';
 import AnimeGridCard from './AnimeGridCard';
-import { useThemeColors } from './useThemeColors';
 
 interface AnimeGridSectionProps {
   animeList: Anime[];
@@ -17,7 +16,6 @@ export default function AnimeGridSection({
   animeList = [], // Provide default empty array to prevent undefined errors
   onAnimePress 
 }: AnimeGridSectionProps) {
-  const colors = useThemeColors();
   
   // Safely handle null or undefined animeList
   const safeAnimeList = animeList || [];
