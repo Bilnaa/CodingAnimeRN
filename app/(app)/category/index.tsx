@@ -90,7 +90,6 @@ export default function CategoryScreen() {
   };
 
   const handleAnimePress = (anime: Anime) => {
-    console.log('Anime pressed:', anime.title);
     // Navigate to anime details screen
     // router.push(`/anime/${anime.mal_id}`);
   };

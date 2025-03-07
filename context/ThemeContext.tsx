@@ -32,19 +32,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Always use device color scheme for light/dark mode
   const colorScheme = deviceColorScheme;
 
-  // Log current theme state
-  console.log('ThemeProvider - Current theme:', theme, 'colorScheme:', colorScheme);
-
   // Load saved theme preference on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-        console.log('Loaded theme from storage:', savedTheme);
         if (savedTheme) {
           // Ensure the saved theme is still valid with our current options
           if (['system', 'purple', 'blue', 'green'].includes(savedTheme)) {
-            console.log('Setting theme to:', savedTheme);
             setThemeState(savedTheme as ThemeType);
           }
         }
@@ -58,11 +53,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Function to set and save theme preference
   const setTheme = async (newTheme: ThemeType) => {
-    console.log('Setting theme to:', newTheme);
     setThemeState(newTheme);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
-      console.log('Theme saved to storage:', newTheme);
     } catch (error) {
       console.error('Failed to save theme preference:', error);
     }

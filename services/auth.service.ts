@@ -51,34 +51,19 @@ export const login = async (email: string, password: string, setError: (message:
 
 export const googleAuth = async (setError: (message: string) => void) => {
     try {
-        console.log("Starting Google Sign-In process...");
-        console.log("Platform:", Platform.OS);
-        console.log("Web Client ID:", ENV.FIREBASE_WEB_CLIENT_ID);
-        
-        
         // Check if your device supports Google Play
-        console.log("Checking Google Play Services...");
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-        console.log("Google Play Services available");
-        
+
         // Sign in with Google
-        console.log("Initiating Google Sign-In...");
-        const userInfo = await GoogleSignin.signIn();
-        console.log("Google Sign-In successful, user info:", userInfo);
-        
-        // Get the tokens
-        console.log("Getting tokens...");
+        await GoogleSignin.signIn();
+
         const { idToken } = await GoogleSignin.getTokens();
-        console.log("Token received:", idToken ? "✓" : "✗");
         
         // Create a Google credential with the token
-        console.log("Creating Firebase credential...");
         const googleCredential = GoogleAuthProvider.credential(idToken);
         
         // Sign-in with credential
-        console.log("Signing in with Firebase...");
         const userCredential = await signInWithCredential(auth, googleCredential);
-        console.log("Firebase sign-in successful");
         
         return userCredential.user;
     } catch (e: any) {

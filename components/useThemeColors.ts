@@ -3,9 +3,7 @@ import { useTheme } from '../context/ThemeContext';
 
 export function useThemeColors() {
   const { theme, colorScheme } = useTheme();
-  
-  console.log('Current theme:', theme, 'colorScheme:', colorScheme);
-  
+
   // For system theme, use the default colors
   if (theme === 'system') {
     return Colors[colorScheme];

@@ -26,7 +26,6 @@ function ThemedApp() {
   
   // Force a refresh when the theme changes
   useEffect(() => {
-    console.log('Theme changed in ThemedApp:', theme);
     // This will force a re-render of the current screen
     const timeout = setTimeout(() => {
       router.setParams({ refresh: Date.now().toString() });

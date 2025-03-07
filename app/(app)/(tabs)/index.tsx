@@ -177,8 +177,6 @@ export default function TabOneScreen() {
   }, [fetchWithRetry]);
 
   const handleAnimePress = async (anime: Anime) => {
-    console.log('Anime pressed:', anime.title);
-
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
@@ -187,7 +185,6 @@ export default function TabOneScreen() {
   
 
   const handleSeeAllPress = (category: string) => {
-    console.log('See all pressed for:', category);
     router.push({
       pathname: "/category",
       params: { category }

@@ -55,7 +55,6 @@ export default function SearchScreen() {
   };
 
   const handleAnimePress = async (anime: Anime) => {
-    console.log('Anime sélectionné:', anime.title);
     router.push({
       pathname: "/details",
       params: {animeId: anime.mal_id},
@@ -118,7 +117,6 @@ export default function SearchScreen() {
             contentContainerStyle={styles.filtersScrollContent}
           >
             {filters.map(filter => {
-              console.log('Filter button color:', colors.primary);
               return (
                 <TouchableOpacity
                   key={filter.id}
