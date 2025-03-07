@@ -117,6 +117,14 @@ export default function ProfileScreen() {
             <Text style={[styles.menuItemText, { color: colors.text }]}>Settings</Text>
             <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/markdown')}
+          >
+            <Ionicons name="logo-markdown" size={24} color={colors.primary} />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>À propos</Text>
+            <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
         </View>
         
         {user && (
