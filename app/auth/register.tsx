@@ -20,10 +20,11 @@ const RegisterView = () => {
         backgroundColor={isDark ? "#121212" : "#ffffff"}
       />
       <View style={styles.header}>
-        <Image
-          source={require('../../assets/images/icon.png')}
+      <Image 
+          source={require('../../assets/images/adaptive-icon.png')} 
           style={styles.logo}
           resizeMode="contain"
+          tintColor={isDark ? "#ffffff" : "#000000"}
         />
         <Text style={styles.title}>Create Account</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign up to get started</Text>
