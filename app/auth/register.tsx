@@ -1,24 +1,24 @@
-import { RegisterForm } from "../../components/forms/RegisterForm";
+import { RegisterForm } from "@/components/forms/RegisterForm";
 import { Text, View, StyleSheet, SafeAreaView, Image } from "react-native";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
-const RegisterView = () => {
+export default function RegisterView () {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
       <View style={styles.header}>
-        <Image 
-          source={require('../../assets/images/icon.png')} 
+        <Image
+          source={require('../../assets/images/icon.png')}
           style={styles.logo}
           resizeMode="contain"
         />
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Sign up to get started</Text>
       </View>
-      
+
       <RegisterForm />
-      
+
       <View style={styles.footer}>
         <Text style={styles.footerText}>Already have an account? </Text>
         <Link href="/auth/login" style={styles.link}>Sign in</Link>
@@ -66,5 +66,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-export default RegisterView;

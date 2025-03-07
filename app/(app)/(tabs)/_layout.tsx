@@ -46,17 +46,17 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="two"
-          options={{
-            title: 'Tab Two',
-            tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          }}
-        />
-        <Tabs.Screen
           name="search"
           options={{
             title: 'Search',
             tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="favorites"
+          options={{
+            title: 'Favorites',
+            tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />,
           }}
         />
         <Tabs.Screen
