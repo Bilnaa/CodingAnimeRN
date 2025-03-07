@@ -272,8 +272,6 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     paddingHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 24,
@@ -291,7 +289,7 @@ const styles = StyleSheet.create({
     height: 200,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 16,
+    marginVertical: 8,
   },
   loadingText: {
     marginTop: 12,
