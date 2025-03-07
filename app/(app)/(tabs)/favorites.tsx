@@ -25,7 +25,7 @@ export default function FavoritesScreen() {
 
   useEffect(() => {
     fetchAnimes()
-  }, [])
+  }, [favorites])
 
   return (
     <SafeAreaView style={styles.container}>
