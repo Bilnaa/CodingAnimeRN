@@ -26,7 +26,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "monochromeImage": "./assets/images/adaptive-icon-monochrome.png",
+        "backgroundColor": "#000000"
       },
       "package": "com.bilna.CodingAnimeRN",
       "googleServicesFile": "./google-services.json",
