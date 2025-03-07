@@ -1,5 +1,5 @@
-import { StyleSheet, SafeAreaView, Image, StatusBar } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, SafeAreaView, Image, StatusBar, TouchableOpacity } from "react-native";
+import { Link, router } from "expo-router";
 import { LoginForm } from "../../components/forms/LoginForm";
 import { Text, View } from "../../components/Themed";
 import { useTheme } from "../../context/ThemeContext";
@@ -33,7 +33,7 @@ const LoginView = () => {
       
       <View style={styles.footer}>
         <Text style={[styles.footerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
-        <Link href="/auth/register" style={[styles.link, { color: colors.primary }]}>Sign up</Link>
+        <Link href={"/auth/register"} style={[styles.link, { color: colors.primary }]}>Sign up</Link>
       </View>
     </SafeAreaView>
   );
