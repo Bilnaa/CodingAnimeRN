@@ -21,9 +21,10 @@ const LoginView = () => {
       />
       <View style={styles.header}>
         <Image 
-          source={require('../../assets/images/icon.png')} 
+          source={require('../../assets/images/adaptive-icon.png')} 
           style={styles.logo}
           resizeMode="contain"
+          tintColor={isDark ? "#ffffff" : "#000000"}
         />
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign in to continue</Text>
