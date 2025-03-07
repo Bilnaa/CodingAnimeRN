@@ -5,17 +5,18 @@ A React Native application for anime enthusiasts with authentication features.
 ## Made by 
 Group 1
 
-Nabile Noufele   
-Nils Dargent  
-Mathis Zerari  
-Diego Carvalho Dos Santos
+Nabil Noufele MEHDI
+Nils DARGENT
+Mathis ZERARI
+Diego CARVALHO DOS SANTOS
 
 ## Features
 
 - User authentication (Email/Password and Google Sign-In)
 - Anime browsing, discovery and information page
 - User profiles
-- __We get the anime from this API : [tutkli](https://github.com/tutkli/jikan-ts).__
+- __We get the data from this API : [Jikan API](https://jikan.moe/)__
+- __We use this library to interact with the API : [Jikan TS](https://github.com/tutkli/jikan-ts)__
 
 ## Setup
 
@@ -42,6 +43,7 @@ Diego Carvalho Dos Santos
    EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
    EXPO_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
    EXPO_PUBLIC_FIREBASE_WEB_CLIENT_ID=your_firebase_web_client_id
+   EXPO_PUBLIC_FIREBASE_IOS_CLIENT_ID=your_firebase_ios_client_id
    ```
 
 ### Setting up Google Sign-In
