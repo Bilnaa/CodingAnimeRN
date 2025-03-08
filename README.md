@@ -1,6 +1,6 @@
-# Coding Anime RN / Yorisuto
+# AniVault
 
-A React Native application for anime enthusiasts with authentication features.
+A React Native application for anime enthusiasts that allows you to track what you like with authentication features.
 
 ## Made by 
 Group 1
