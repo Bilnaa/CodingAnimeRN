@@ -1,3 +1,5 @@
+> **Warning**
+> This is a school project, it's not a personal project every contributor has rights to this code.
 # AniVault
 
 A React Native application for anime enthusiasts that allows you to track what you like with authentication features.
@@ -5,10 +7,10 @@ A React Native application for anime enthusiasts that allows you to track what y
 ## Made by 
 Group 1
 
-Nabil Noufele MEHDI
-Nils DARGENT
-Mathis ZERARI
-Diego CARVALHO DOS SANTOS
+- Nabil Noufele MEHDI
+- Nils DARGENT
+- Mathis ZERARI
+- Diego CARVALHO DOS SANTOS
 
 ## Features
 
