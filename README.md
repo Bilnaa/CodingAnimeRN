@@ -1,5 +1,5 @@
-> **Warning**
-> This is a school project, it's not a personal project every contributor has rights to this code.
+> [!WARNING]  
+> This is a school project, it's not a personal project every contributor has rights to this code. It is proprietary.
 # AniVault
 
 A React Native application for anime enthusiasts that allows you to track what you like with authentication features.
